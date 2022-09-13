@@ -1,0 +1,171 @@
+@use "sass:map";
+@use "sass:color";
+@use "sass:math";
+@import "./variables.scss";
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@100;300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import "@fortawesome/fontawesome-free/css/all.css";
+@import "./tailwind.css";
+
+:root {
+  --tp-font-display: "mokoko";
+  --tp-font-sans: "transat-text";
+
+  --tp-primary-focus: hsl(160deg, 22%, 36%);
+  --tp-accent-focus: hsl(357deg, 46%, 42%);
+
+  --tp-red: hsl(357, 46%, 52%);
+  --tp-blue: hsl(160, 22%, 46%);
+  --tp-green: hsl(92, 33%, 56%);
+  --tp-yellow: hsl(50, 83%, 74%);
+  --tp-purple: hsl(255, 25%, 59%);
+
+  --tp-chart-failed: hsl(357, 46%, 52%);
+  --tp-chart-three: hsl(50, 83%, 74%);
+  --tp-chart-four: hsl(92, 33%, 56%);
+  --tp-chart-five: hsl(160, 22%, 46%);
+
+  --tp-switch-thumb: hsl(30deg 6% 94%);
+
+  --tp-base-content: var(--tp-base-content-hsl);
+}
+
+html[data-theme="light"] {
+  --tp-base-100-hsl: 30deg 6% 94%;
+  --tp-base-100: hsl(var(--tp-base-100-hsl));
+  --tp-base-200: hsl(30deg, 6%, 90%);
+  --tp-base-300: hsl(30deg, 6%, 86%);
+
+  --tp-chart-content: hsl(210deg, 6%, 33%);
+  --tp-chart-border: var(--tp-base-300);
+
+  --tp-base-content-hsl: 210deg, 6%, 33%;
+}
+
+html[data-theme="dark"] {
+  --tp-base-100-hsl: 220 18% 20%;
+  --tp-base-200-hsl: 220 17% 17%;
+  --tp-base-300-hsl: 219 18% 15%;
+  --tp-base-100: hsl(var(--tp-base-100-hsl));
+  --tp-base-200: hsl(var(--tp-base-200-hsl));
+  --tp-base-300: hsl(var(--tp-base-300-hsl));
+
+  --tp-chart-content: hsl(220 13% 69%);
+  --tp-chart-border: hsl(30 6% 86% / 0.1);
+
+  --tp-base-content-hsl: 220 13% 69%;
+}
+
+html,
+body {
+  position: relative;
+  width: 100vw;
+  min-height: var(--screen-height);
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
+  overflow-x: hidden;
+
+  background-color: var(--b1);
+  font-family: var(--tp-font-sans);
+  color: var(--bc);
+}
+
+.view {
+  padding-bottom: 3rem;
+  // min-height: 75vh;
+  transition: height 0.1s ease-out;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+:root {
+  // @each $name, $value in $palette {
+  //   --#{$prefix}-#{$name}: #{$value};
+  // }
+
+  // @each $name, $value in map.get($theme, "fonts") {
+  //   --#{$prefix}-font-#{$name}: #{$value};
+  // }
+
+  --sp-search-box-z: 1000;
+
+  --z-toaster: 1200;
+  --z-sidebar: 1100;
+  --z-dropdown: 900;
+  --z-bottom: 1;
+
+  --shadow-color: 0deg 0% 0%;
+  --shadow-elevation-low: 0px 0.4px 0.5px hsl(var(--shadow-color) / 0.11),
+    0px 0.7px 0.8px -1.2px hsl(var(--shadow-color) / 0.11),
+    0px 1.7px 1.9px -2.5px hsl(var(--shadow-color) / 0.11);
+  --shadow-elevation-medium: 0px 0.4px 0.5px hsl(var(--shadow-color) / 0.11),
+    0px 1.4px 1.6px -0.8px hsl(var(--shadow-color) / 0.11),
+    0px 3.5px 3.9px -1.7px hsl(var(--shadow-color) / 0.11),
+    0.1px 8.5px 9.6px -2.5px hsl(var(--shadow-color) / 0.11);
+  --shadow-elevation-high: 0px 0.4px 0.5px hsl(var(--shadow-color) / 0.1),
+    0px 2.5px 2.8px -0.4px hsl(var(--shadow-color) / 0.1),
+    0px 4.6px 5.2px -0.7px hsl(var(--shadow-color) / 0.1),
+    0.1px 7.6px 8.6px -1.1px hsl(var(--shadow-color) / 0.1),
+    0.1px 12.2px 13.7px -1.4px hsl(var(--shadow-color) / 0.1),
+    0.2px 19.1px 21.5px -1.8px hsl(var(--shadow-color) / 0.1),
+    0.2px 29px 32.6px -2.1px hsl(var(--shadow-color) / 0.1),
+    0.4px 42.7px 48px -2.5px hsl(var(--shadow-color) / 0.1);
+}
+
+@include below("xs") {
+  .desktop-only {
+    display: none;
+  }
+}
+
+@include above("xs") {
+  .mobile-only {
+    display: none;
+  }
+}
+
+@each $breakpoint, $value in $breakpoints {
+  @include below($breakpoint) {
+    .hide-below-#{$breakpoint} {
+      display: none;
+    }
+  }
+
+  @include above($breakpoint) {
+    .hide-above-#{$breakpoint} {
+      display: none;
+    }
+  }
+}
+
+.logo {
+  filter: brightness(10) grayscale(1);
+}
+
+.black {
+  background-color: rgb(30, 41, 48);
+}
+
+.scrim {
+  background-image: linear-gradient(
+    0deg,
+    rgb(30, 41, 48, 0) 0%,
+    rgba(30, 41, 48, 0.4) 40%,
+    rgba(30, 41, 48, 0.5) 90%
+  );
+
+  // background: radial-gradient(
+  //   circle,
+  //   rgba(30, 41, 48, 0) 0%,
+  //   rgba(30, 41, 48, 0.3) 75%,
+  //   rgba(30, 41, 48, 0.4) 90%
+  // );
+}

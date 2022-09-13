@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma/clients/common"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  title    String?
+  email    String?
+  imageUrl String?
+}
+
+model Event {
+  id                 Int      @id @default(autoincrement())
+  title              String
+  description        String
+  date               DateTime
+  maxParticipants    Int
+  registrationOpens  DateTime
+  registrationCloses DateTime
+  imageUrl           String?
+  foodWillBeServed   Boolean
+  archived           Boolean  @default(false)
+
+  tickets EventRegistration[]
+}
+
+model EventRegistration {
+  eventId          Int
+  name             String
+  email            String
+  foodPreferences  String?
+  timestamp        DateTime @default(now())
+  verificationCode String   @id
+  attended         Boolean  @default(false)
+
+  event Event @relation(fields: [eventId], references: [id])
+}
+
+model JobAd {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  closesOn    DateTime
+  url         String
+  clicks      Int      @default(0)
+  imageUrl    String?
+  timestamp   DateTime @default(now())
+}
