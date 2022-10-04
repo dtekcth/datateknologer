@@ -35,8 +35,10 @@ export default defineComponent({
   section.h-72.w-full.bg-cover.bg-no-repeat.relative.parallax.landing
     Header
 
-  section.bg-base-100.pt-8.pb-16.no-parallax.border-y-brand.border-y-8.flex.justify-center
-    div(class="w-[110ch]")
+  section.bg-base-100.p-8.no-parallax.border-y-brand.border-y-8.flex(
+    class="lg:justify-center"
+  )
+    div(class="lg:w-[110ch]")
       h1.font-display.text-brand.mb-8 Upcoming events
       .flex.items-center(v-if="events.isEmpty()", class="h-[10rem]")
         div
@@ -47,11 +49,17 @@ export default defineComponent({
               target="_blank"
             ) division newspaper.
 
-      .grid.flex-col.gap-16(v-else)
+      .flex.flex-col.gap-16(v-else)
         div(v-for="event in events")
-          .flex.justify-between
-            div(class="w-[60ch]")
-              .flex.items-center.justify-between.mb-4
+          .flex.flex-col.justify-between.gap-8(class="lg:flex-row")
+            img.object-contain(
+              :src="`${CONFIG.PUBLIC_URL}/${event.imageUrl}`",
+              class="lg:order-last max-h-[400px] max-w-[300px] lg:max-w-[460px]"
+            )
+            div(class="lg:w-[60ch]")
+              .flex.flex-col.mb-4(
+                class="lg:flex-row lg:items-center lg:justify-between"
+              )
                 h2.mb-0.font-display.text-brand {{ event.title }}
                 .text-lg.text-muted.font-display.font-bold {{ format(event.date, "yyyy-MM-dd") }}
               .text-lg.mb-8 {{ event.description }}
@@ -62,18 +70,18 @@ export default defineComponent({
                   :to="{ name: 'Register', query: { id: event.id, foodWillBeServed: event.foodWillBeServed } }"
                 )
                   .btn Register
-                .text-lg Registration closes on&nbsp;
-                  span.font-bold {{ format(event.registrationCloses, "yyyy-MM-dd") }}
+                .flex.text-right
+                  span Registration closes on&nbsp;
+                    span.font-bold {{ format(event.registrationCloses, "yyyy-MM-dd") }}
               .font-bold(v-else) There are no tickets left for this event.
-            img(:src="`${CONFIG.PUBLIC_URL}/${event.imageUrl}`", class="max-w-[20rem]")
 
   section.h-96.w-full.relative.parallax.pub
     .absolute.center.bg-contain.bg-no-repeat.logo(
-      class="w-[24rem] h-[12rem]",
+      class="w-[12rem] h-[6rem] md:w-[24rem] md:h-[12rem]",
       :style="{ backgroundImage: `url('${logoUrl}')` }"
     )
 
-  section.bg-base-100.pt-8.pb-16.px-64.no-parallax.border-t-brand.border-t-8
+  section.bg-base-100.p-8.no-parallax.border-t-brand.border-t-8(class="lg:px-64")
     .flex.justify-center
       h1.font-display.text-brand.mb-8 Job openings
     .flex.items-center(v-if="jobs.isEmpty()", class="h-[10rem]")
@@ -85,15 +93,14 @@ export default defineComponent({
             target="_blank"
           ) division newspaper.
     div(v-else)
-      .grid.grid-cols-3.gap-16
+      .grid.grid-cols-1.gap-16(class="lg:grid-cols-3")
         div(v-for="ad in jobs")
           .h-48.w-full.mb-4.bg-contain.bg-center.bg-no-repeat(
             :style="{ backgroundImage: `url('${CONFIG.PUBLIC_URL}/${ad.imageUrl}')` }"
           )
           h3.font-display.mb-2 {{ ad.title }}
           .text-lg.mb-4 {{ ad.description }}
-          .flex
-            a(:href="ad.url"): .btn.w-32 Apply
+          a.block.w-full(:href="ad.url"): .btn.w-full Apply
 
   .no-parallax
     Footer

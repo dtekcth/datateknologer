@@ -4,7 +4,8 @@ import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import Header from "../components/Header.vue";
 import frontUrl from "../assets/theone.png";
-import logoUrl from "../assets/logo.webp";
+import logoOrange from "../assets/orange.svg";
+import logoWhite from "../assets/white.svg";
 import { config } from "../config";
 import AnimatedNumber from "../components/AnimatedNumber.vue";
 
@@ -16,7 +17,8 @@ export default defineComponent({
     return {
       tl,
       frontUrl,
-      logoUrl,
+      logoOrange,
+      logoWhite,
       locale,
       profiles: config.profiles,
     };
@@ -29,75 +31,52 @@ export default defineComponent({
 .w-screen.text-base-content.parallax-container
   section.h-screen.w-full.bg-cover.bg-no-repeat.flex.flex-col.relative.parallax.landing
     .absolute.w-full.h-72.scrim 
-    //- .absolute.w-full.h-full.scrim 
     Header
-      //- .flex.gap-4.items-center.text-2xl.text-white
-      //-   .text-display.drop-shadow Home
-      //-   .text-display.drop-shadow Available jobs
-      //-   .text-display.drop-shadow About us
-      //- .flex.gap-8.items-center.text-4xl.text-white.font-bold
-      //-   .font-display.drop-shadow Companies
-      //-   .font-display.drop-shadow Students
 
-    //- .absolute.bottom-32.w-full.w-full.text-4xl.text-white.justify-center.flex.justify-center
-    //-   .flex.gap-64
-    //-     .font-display.drop-shadow.border-4.rounded.p-2 Companies
-    //-     .font-display.drop-shadow.border-4.rounded.p-2 Students
-    //- .flex-grow
-    //- svg.w-full.h-64(
-    //-   width="100%",
-    //-   height="70px",
-    //-   viewBox="0 0 1280 140",
-    //-   preserveAspectRatio="none",
-    //-   xmlns="http://www.w3.org/2000/svg"
-    //- )
-    //-   g(fill="#1e2930")
-    //-     path(d="M1280 140V0S993.46 140 640 139 0 0 0 0v140z")
-    //- .black.w-full.flex.justify-center.py-2
-    //-   .h-32.w-64.bg-contain.bg-no-repeat(
-    //-     :style="{ backgroundImage: `url('${logoUrl}')` }"
-    //-   )
-
-  section#services.w-full.black.p-8.px-64.no-parallax.border-y-brand.border-y-8
-    .flex.justify-between.items-center.gap-20.mb-16
-      .bg-contain.bg-no-repeat(
-        class="w-[64rem] h-[12rem]",
-        :style="{ backgroundImage: `url('${logoUrl}')` }"
+  section#services.w-full.black.p-8.no-parallax.border-y-brand.border-y-8.px-8(
+    class="lg:px-64"
+  )
+    .grid.grid-cols-1.gap-20.mb-16(class="lg:grid-cols-2")
+      .bg-contain.bg-no-repeat.hidden(
+        class="lg:block w-[64rem] h-[12rem]",
+        :style="{ backgroundImage: `url('${logoOrange}')` }"
       )
       .flex-grow
         .text-4xl.text-brand.mb-4.font-bold.font-display Services
         .text-lg We offer you a large selection of services for your buisness. We can provide standard solutions or customized the events, based on your goals and ambitions. With a student network of more than 500 people, and plenty of driven student associations, we can help you meet several of your PR and recruitment goals.
 
-    .flex.justify-around.items-center.mb-8.gap-12
+    .grid.grid-cols-1.gap-12.mb-16(class="lg:grid-cols-3")
       div
-        .flex.items-center.justify-between.gap-8.text-4xl.text-brand.mb-2
+        .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
           .font-bold.font-display Lunch lecture
           .fa.fa-chalkboard-user
         .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
 
       div
-        .flex.items-center.justify-between.gap-8.text-4xl.text-brand.mb-2
+        .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
           .font-bold.font-display Pub events
           .fa.fa-martini-glass
         .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
 
       div
-        .flex.items-center.justify-between.gap-8.text-4xl.text-brand.mb-2
+        .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
           .font-bold.font-display Marketing
           .fa.fa-bullhorn
         .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
 
   section.h-96.w-full.relative.parallax.intermission
     .absolute.center.bg-contain.bg-no-repeat.logo(
-      class="w-[24rem] h-[12rem]",
-      :style="{ backgroundImage: `url('${logoUrl}')` }"
+      class="w-[12rem] h-[6rem] md:w-[24rem] md:h-[12rem]",
+      :style="{ backgroundImage: `url('${logoWhite}')` }"
     )
 
-  section.w-full.bg-base-100.p-16.px-64.no-parallax.flex.flex-col.gap-12.border-y-brand.border-y-8
+  section.w-full.bg-base-100.p-16.px-8.no-parallax.flex.flex-col.gap-12.border-y-brand.border-y-8(
+    class="lg:px-64"
+  )
     .mb-8
       h1.font-display.mb-4.text-brand The program
-      .flex.justify-between.gap-8.items-center
-        .text-lg(class="w-[60ch]") We are one of the fastest growing programs at Chalmers University of Technology, having doubled the amount of new students since 2019. Our students are able to move on to a diverse selection of Master programmes, ranging from computer hardware, to automation, to software management.
+      .grid.grid-cols-1.gap-8.items-center(class="lg:grid-cols-2")
+        .text-lg(class="lg:w-[60ch]") We are one of the fastest growing programs at Chalmers University of Technology, having doubled the amount of new students since 2019. Our students are able to move on to a diverse selection of Master programmes, ranging from computer hardware, to automation, to software management.
         .flex.gap-8.justify-end.items-center
           .text-center
             .text-3xl.font-display.font-bold.text-brand
@@ -112,14 +91,12 @@ export default defineComponent({
             .text-lg Total students
 
     .mb-8
-      .flex.justify-end
+      .flex(class="lg:justify-end")
         h1.font-display.mb-4.text-brand Our division
-      .flex.justify-between.gap-8.items-center
-        .flex.gap-8.justify-end.items-center
-          .text-center
-            .text-3xl.font-display.font-bold.text-brand
-              h1 
-            .text-lg 
+      .grid.grid-cols-1.gap-8.items-center(class="lg:grid-cols-2")
+        .text-lg(class="lg:w-[60ch] lg:order-last") We are one of the largest student divisions at Chalmers, and while we are not the largest, we do have the highest engagement rate with over 100 new volunteers every year. The Swedish trend of diminishing involvement can not be seen at our division, in contrast to other universities we are growing steadily by creating new forms of engagement.
+
+        .flex.gap-8.justify-center.items-center(class="lg:justify-start")
           .text-center
             .text-3xl.font-display.font-bold.text-brand
               h1: AnimatedNumber(:target="22")
@@ -129,19 +106,19 @@ export default defineComponent({
               h1: AnimatedNumber(:target="102")
             .text-lg New volunteers every year
 
-        .text-lg(class="w-[60ch]") We are one of the largest student divisions at Chalmers, and while we are not the largest, we do have the highest engagement rate with over 100 new volunteers every year. The Swedish trend of diminishing involvement can not be seen at our division, in contrast to other universities we are growing steadily by creating new forms of engagement.
-
   section.h-96.w-full.relative.parallax.pub
     .absolute.center.bg-contain.bg-no-repeat.logo(
-      class="w-[24rem] h-[12rem]",
-      :style="{ backgroundImage: `url('${logoUrl}')` }"
+      class="w-[12rem] h-[6rem] md:w-[24rem] md:h-[12rem]",
+      :style="{ backgroundImage: `url('${logoWhite}')` }"
     )
 
-  section.w-full.bg-base-100.p-16.px-64.no-parallax.border-t-brand.border-t-8
+  section.w-full.bg-base-100.no-parallax.border-t-brand.border-t-8.p-8(
+    class="lg:p-16 lg:px-64"
+  )
     .flex.justify-center.flex-col.items-center.mb-8
       h1.pb-2.mb-2.font-display.border-b.border-base-content.text-brand Our team
       .text-lg Don't hesitate to contact us if you have any questions
-    .grid.grid-cols-3.gap-32.mb-4
+    .grid.grid-cols-1.gap-8.mb-4(class="lg:grid-cols-3 lg:gap-32")
       .flex.flex-col.items-center.mb-8(
         v-for="{email, name, pictureUrl, title} in profiles.take(3)"
       )
@@ -150,7 +127,7 @@ export default defineComponent({
           .text-2xl.text-brand.font-bold.font-display {{ name }}
           .text-lg.font-bold {{ title }}
           .text-lg {{ email }}
-    .grid.grid-cols-4.gap-32
+    .grid.grid-cols-1.gap-4(class="lg:grid-cols-4 lg:gap-32")
       .flex.flex-col.items-center(
         v-for="{email, name, pictureUrl, title} in profiles.skip(3)"
       )

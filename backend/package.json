@@ -1,5 +1,5 @@
 {
-  "name": "course-portal",
+  "name": "dag-app",
   "version": "22.8.0",
   "main": "dist/index.js",
   "license": "AGPLv3",
