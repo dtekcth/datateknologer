@@ -3,10 +3,10 @@
 git pull
 
 cd backend
-yarn docker:build
+docker build . --tag dag-app:latest --target=final
 
 cd ../web
-yarn docker:build
+docker build . --tag dag-web:latest --target=final
 
 cd ..
 docker-compose down
