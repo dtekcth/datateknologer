@@ -187,7 +187,7 @@ export class Server {
       });
       log.info("Incoming request");
       try {
-        if (schema.admin) {
+        if (schema.admin === true) {
           const result = await this.authenticate(req);
           if (result) {
             result.send(res);
