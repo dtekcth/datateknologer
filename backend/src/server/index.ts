@@ -26,6 +26,8 @@ import {
 } from "./types";
 import { ErrorCode } from "./codes";
 
+import * as Routes from "../routes/index";
+
 const colorMethod = (method: string) => {
   switch (method) {
     case "GET":
@@ -245,8 +247,9 @@ export class Server {
 
   async listen(host: string, port: number): Promise<void> {
     const uploads = multer({ dest: this.ctx.config.paths.uploads });
+    const endpoints = Object.values(Routes).map((m) => m.default);
 
-    for (const { handler, schema } of await loadEndpoints()) {
+    for (const { handler, schema } of endpoints as any) {
       // validateSchema(schema);
       const { method } = schema;
       const path = join(this.root, schema.path);
