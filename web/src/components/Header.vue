@@ -39,7 +39,7 @@ div
       class="lg:hidden",
       @click="sidebarActive = !sidebarActive"
     )
-    .hidden.flex.gap-4.items-center.text-2xl.text-white.font-black(class="lg:block")
+    .hidden.flex.gap-4.items-center.text-2xl.text-white.font-black(class="lg:flex")
       Link.font-display.drop-shadow-xl.text-white(
         :to="{ name: 'Home', hash: '#services' }"
       ) Companies
