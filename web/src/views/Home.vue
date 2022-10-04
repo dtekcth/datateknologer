@@ -29,7 +29,14 @@ export default defineComponent({
 
 <template lang="pug">
 .w-screen.text-base-content.parallax-container
-  section.h-screen.w-full.bg-cover.bg-no-repeat.flex.flex-col.relative.parallax.landing
+  section.w-full.bg-no-repeat.flex.flex-col.relative.no-parallax.landing(
+    class="lg:hidden h-[40vh]"
+  )
+    .absolute.w-full.h-72.scrim 
+    Header
+  section.hidden.h-screen.w-full.bg-cover.bg-no-repeat.flex.flex-col.relative.parallax.landing(
+    class="lg:block"
+  )
     .absolute.w-full.h-72.scrim 
     Header
 
@@ -42,27 +49,27 @@ export default defineComponent({
         :style="{ backgroundImage: `url('${logoOrange}')` }"
       )
       .flex-grow
-        .text-4xl.text-brand.mb-4.font-bold.font-display Services
-        .text-lg We offer you a large selection of services for your buisness. We can provide standard solutions or customized the events, based on your goals and ambitions. With a student network of more than 500 people, and plenty of driven student associations, we can help you meet several of your PR and recruitment goals.
+        .text-4xl.text-brand.mb-4.font-bold.font-display Our Services
+        .text-lg Our mission is to give the students of the Computer Science and Engineering division a broad picture of the many possibilities in the field. We do so by assisting companies in marketing or organizing events. With a student network that grows by each year, and plenty of driven student associations, we can help your company connect with the future of computer engineering.
 
     .grid.grid-cols-1.gap-12.mb-16(class="lg:grid-cols-3")
       div
         .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
-          .font-bold.font-display Lunch lecture
+          .font-bold.font-display Lunch seminars
           .fa.fa-chalkboard-user
-        .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
+        .text-justify Let our students get to know what you do at your company, what cool techniques you use or let them get inspired by the journey of one of your employees! For an hour, you get the full attention of a lecture hall filled with students. Lunch lectures are very popular among our students, and a free lunch is seldom turned down.
 
       div
         .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
           .font-bold.font-display Pub events
           .fa.fa-martini-glass
-        .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
+        .text-justify A student favorite! An evening with food, beverages and gött häng. During a company pub, you have the opportunity to get to know our students and introduce them to your company in a more relaxed atmosphere. Pub quizzes, case solving, or any other fun activity - the pub event is the perfect time to show off your company spirit and flair.
 
       div
         .flex.items-center.justify-between.gap-8.text-3xl.text-brand.mb-2
           .font-bold.font-display Marketing
           .fa.fa-bullhorn
-        .text-justify Capture the students in their natural habitat – the lecture hall! During a lunch seminar, you have the opportunity to provide the students with an insight into who you are, what your company does and why you are a unique employer. Lunch seminars are a very popular event, where students are looking forward to discovering you and learn more about you buisness.
+        .text-justify Searching for a new developer? Hosting an epic hackathon or event? Something else entirely? We can help you spread the word! By utilizing one of our many marketing solutions, your company can reach our students through our social media channels, the division’s weekly newsletter, or with posters in all of our section premises.
 
   section.h-96.w-full.relative.parallax.intermission
     .absolute.center.bg-contain.bg-no-repeat.logo(
@@ -70,8 +77,8 @@ export default defineComponent({
       :style="{ backgroundImage: `url('${logoWhite}')` }"
     )
 
-  section.w-full.bg-base-100.p-16.px-8.no-parallax.flex.flex-col.gap-12.border-y-brand.border-y-8(
-    class="lg:px-64"
+  section.w-full.bg-base-100.p-8.no-parallax.flex.flex-col.gap-12.border-y-brand.border-y-8(
+    class="lg:px-16 2xl:px-64"
   )
     .mb-8
       h1.font-display.mb-4.text-brand The program
@@ -94,7 +101,7 @@ export default defineComponent({
       .flex(class="lg:justify-end")
         h1.font-display.mb-4.text-brand Our division
       .grid.grid-cols-1.gap-8.items-center(class="lg:grid-cols-2")
-        .text-lg(class="lg:w-[60ch] lg:order-last") We are one of the largest student divisions at Chalmers, and while we are not the largest, we do have the highest engagement rate with over 100 new volunteers every year. The Swedish trend of diminishing involvement can not be seen at our division, in contrast to other universities we are growing steadily by creating new forms of engagement.
+        .text-lg(class="2xl:w-[60ch] lg:order-last") We are one of the largest student divisions at Chalmers, and while we are not the largest, we do have the highest engagement rate with over 100 new volunteers every year. The Swedish trend of diminishing involvement can not be seen at our division, in contrast to other universities we are growing steadily by creating new forms of engagement.
 
         .flex.gap-8.justify-center.items-center(class="lg:justify-start")
           .text-center
@@ -206,25 +213,21 @@ section {
   width: 100%;
 }
 
-.no-parallax {
-  z-index: 999;
-}
-.parallax::after {
-  content: " ";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-position: center center;
-  z-index: -1;
-}
-
 .parallax.landing::after {
   background: url("../assets/theone.jpg");
   background-size: cover;
   transform: translateZ(-1px) scale(1.5);
 }
+
+.landing:not(.parallax) {
+  background: url("../assets/theone.jpg");
+  background-size: cover;
+  background-position: center top;
+}
+
+@media screen {
+}
+
 .parallax.intermission::after {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("../assets/front.png");

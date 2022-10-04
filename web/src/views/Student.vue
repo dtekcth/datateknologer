@@ -138,7 +138,7 @@ section {
 
 .landing::after {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("../assets/pub.png");
+    url("../assets/dateit.jpg");
   background-size: cover;
   top: -10rem;
   height: 200%;
@@ -148,7 +148,7 @@ section {
 
 .parallax.pub::after {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("../assets/pub.png");
+    url("../assets/basen.jpg");
   background-size: cover;
   height: 160%;
 
