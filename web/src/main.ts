@@ -1,5 +1,4 @@
 import "./std/global";
-import "intl-pluralrules";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
