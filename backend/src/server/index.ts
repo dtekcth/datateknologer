@@ -247,10 +247,15 @@ export class Server {
 
   async listen(host: string, port: number): Promise<void> {
     const uploads = multer({ dest: this.ctx.config.paths.uploads });
-    const endpoints = Object.values(Routes).map((m) => m.default);
+    const endpoints = Object.values(Routes)
+      .map((m) => m.default)
+      .sortBy(
+        (a, b) => countColons(a.schema.path) - countColons(b.schema.path)
+      );
 
     for (const { handler, schema } of endpoints as any) {
       // validateSchema(schema);
+      console.log(schema);
       const { method } = schema;
       const path = join(this.root, schema.path);
       const expressHandler = this.buildRouteHandler(schema, handler);
