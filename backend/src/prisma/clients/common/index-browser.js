@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
-  Decimal
+  Decimal,
+  objectEnumValues,
+  makeStrictEnum
 } = require('./runtime/index-browser')
 
 
@@ -11,11 +13,11 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 3.7.0
+ * Prisma Client JS version: 4.4.0
  * Query Engine version: 8746e055198f517658c08a0c426c7eec87f5a85f
  */
 Prisma.prismaVersion = {
-  client: "3.7.0",
+  client: "4.4.0",
   engine: "8746e055198f517658c08a0c426c7eec87f5a85f"
 }
 
@@ -37,6 +39,10 @@ In case this error is unexpected for you, please report it in https://github.com
 )}
 Prisma.PrismaClientValidationError = () => {
   throw new Error(`PrismaClientValidationError is unable to be run in the browser.
+In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
+)}
+Prisma.NotFoundError = () => {
+  throw new Error(`NotFoundError is unable to be run in the browser.
 In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
 )}
 Prisma.Decimal = Decimal
@@ -65,9 +71,15 @@ Prisma.validator = () => (val) => val
 /**
  * Shorthand utilities for JSON filtering
  */
-Prisma.DbNull = 'DbNull'
-Prisma.JsonNull = 'JsonNull'
-Prisma.AnyNull = 'AnyNull'
+Prisma.DbNull = objectEnumValues.instances.DbNull
+Prisma.JsonNull = objectEnumValues.instances.JsonNull
+Prisma.AnyNull = objectEnumValues.instances.AnyNull
+
+Prisma.NullTypes = {
+  DbNull: objectEnumValues.classes.DbNull,
+  JsonNull: objectEnumValues.classes.JsonNull,
+  AnyNull: objectEnumValues.classes.AnyNull
+}
 
 /**
  * Enums
@@ -76,12 +88,14 @@ Prisma.AnyNull = 'AnyNull'
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 function makeEnum(x) { return x; }
 
-exports.Prisma.ProfileScalarFieldEnum = makeEnum({
-  id: 'id',
+exports.Prisma.EventRegistrationScalarFieldEnum = makeEnum({
+  eventId: 'eventId',
   name: 'name',
-  title: 'title',
   email: 'email',
-  imageUrl: 'imageUrl'
+  foodPreferences: 'foodPreferences',
+  timestamp: 'timestamp',
+  verificationCode: 'verificationCode',
+  attended: 'attended'
 });
 
 exports.Prisma.EventScalarFieldEnum = makeEnum({
@@ -97,16 +111,6 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   archived: 'archived'
 });
 
-exports.Prisma.EventRegistrationScalarFieldEnum = makeEnum({
-  eventId: 'eventId',
-  name: 'name',
-  email: 'email',
-  foodPreferences: 'foodPreferences',
-  timestamp: 'timestamp',
-  verificationCode: 'verificationCode',
-  attended: 'attended'
-});
-
 exports.Prisma.JobAdScalarFieldEnum = makeEnum({
   id: 'id',
   title: 'title',
@@ -118,14 +122,29 @@ exports.Prisma.JobAdScalarFieldEnum = makeEnum({
   timestamp: 'timestamp'
 });
 
-exports.Prisma.SortOrder = makeEnum({
-  asc: 'asc',
-  desc: 'desc'
+exports.Prisma.ProfileScalarFieldEnum = makeEnum({
+  id: 'id',
+  name: 'name',
+  title: 'title',
+  email: 'email',
+  imageUrl: 'imageUrl'
 });
 
 exports.Prisma.QueryMode = makeEnum({
   default: 'default',
   insensitive: 'insensitive'
+});
+
+exports.Prisma.SortOrder = makeEnum({
+  asc: 'asc',
+  desc: 'desc'
+});
+
+exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
+  Serializable: 'Serializable'
 });
 
 

@@ -88,7 +88,7 @@ export type JobAd = {
 export class PrismaClient<
   T extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
   U = 'log' extends keyof T ? T['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<T['log']> : never : never,
-  GlobalReject = 'rejectOnNotFound' extends keyof T
+  GlobalReject extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined = 'rejectOnNotFound' extends keyof T
     ? T['rejectOnNotFound']
     : false
       > {
@@ -150,7 +150,7 @@ export class PrismaClient<
    */
   $use(cb: Prisma.Middleware): void
 
-  /**
+/**
    * Executes a prepared raw query and returns the number of affected rows.
    * @example
    * ```
@@ -209,8 +209,7 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends PrismaPromise<any>[]>(arg: [...P]): Promise<UnwrapTuple<P>>;
-
+  $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<UnwrapTuple<P>>;
 
       /**
    * `prisma.profile`: Exposes CRUD operations for the **Profile** model.
@@ -264,6 +263,7 @@ export namespace Prisma {
   export import PrismaClientRustPanicError = runtime.PrismaClientRustPanicError
   export import PrismaClientInitializationError = runtime.PrismaClientInitializationError
   export import PrismaClientValidationError = runtime.PrismaClientValidationError
+  export import NotFoundError = runtime.NotFoundError
 
   /**
    * Re-export of sql-template-tag
@@ -279,8 +279,18 @@ export namespace Prisma {
    */
   export import Decimal = runtime.Decimal
 
+  export type DecimalJsLike = runtime.DecimalJsLike
+
   /**
-   * Prisma Client JS version: 3.7.0
+   * Metrics 
+   */
+  export import Metrics = runtime.Metrics
+  export import Metric = runtime.Metric
+  export import MetricHistogram = runtime.MetricHistogram
+  export import MetricHistogramBucket = runtime.MetricHistogramBucket
+
+  /**
+   * Prisma Client JS version: 4.4.0
    * Query Engine version: 8746e055198f517658c08a0c426c7eec87f5a85f
    */
   export type PrismaVersion = {
@@ -340,25 +350,68 @@ export namespace Prisma {
   export type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray
 
   /**
+   * Types of the values used to represent different kinds of `null` values when working with JSON fields.
+   * 
+   * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+   */
+  namespace NullTypes {
+    /**
+    * Type of `Prisma.DbNull`.
+    * 
+    * You cannot use other instances of this class. Please use the `Prisma.DbNull` value.
+    * 
+    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+    */
+    class DbNull {
+      private DbNull: never
+      private constructor()
+    }
+
+    /**
+    * Type of `Prisma.JsonNull`.
+    * 
+    * You cannot use other instances of this class. Please use the `Prisma.JsonNull` value.
+    * 
+    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+    */
+    class JsonNull {
+      private JsonNull: never
+      private constructor()
+    }
+
+    /**
+    * Type of `Prisma.AnyNull`.
+    * 
+    * You cannot use other instances of this class. Please use the `Prisma.AnyNull` value.
+    * 
+    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
+    */
+    class AnyNull {
+      private AnyNull: never
+      private constructor()
+    }
+  }
+
+  /**
    * Helper for filtering JSON entries that have `null` on the database (empty on the db)
    * 
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
-  export const DbNull: 'DbNull'
+  export const DbNull: NullTypes.DbNull
 
   /**
    * Helper for filtering JSON entries that have JSON `null` values (not empty on the db)
    * 
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
-  export const JsonNull: 'JsonNull'
+  export const JsonNull: NullTypes.JsonNull
 
   /**
    * Helper for filtering JSON entries that are `Prisma.DbNull` or `Prisma.JsonNull`
    * 
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
-  export const AnyNull: 'AnyNull'
+  export const AnyNull: NullTypes.AnyNull
 
   type SelectAndInclude = {
     select: any
@@ -443,7 +496,11 @@ export namespace Prisma {
    * XOR is needed to have a real mutually exclusive union type
    * https://stackoverflow.com/questions/42123407/does-typescript-support-mutually-exclusive-types
    */
-  type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+  type XOR<T, U> =
+    T extends object ?
+    U extends object ?
+      (Without<T, U> & U) | (Without<U, T> & T)
+    : U : T
 
 
   /**
@@ -453,7 +510,7 @@ export namespace Prisma {
   ? False
   : T extends Date
   ? False
-  : T extends Buffer
+  : T extends Uint8Array
   ? False
   : T extends BigInt
   ? False
@@ -650,6 +707,11 @@ export namespace Prisma {
    */
   type ExcludeUnderscoreKeys<T extends string> = T extends `_${string}` ? never : T
 
+
+  export import FieldRef = runtime.FieldRef
+
+  type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRef<Model, FieldType>
+
   class PrismaClientFetcher {
     private readonly prisma;
     private readonly debug;
@@ -687,7 +749,7 @@ export namespace Prisma {
     ? IsReject<LocalRejectSettings>
     : GlobalRejectSettings extends RejectPerOperation
     ? Action extends keyof GlobalRejectSettings
-      ? GlobalRejectSettings[Action] extends boolean
+      ? GlobalRejectSettings[Action] extends RejectOnNotFound
         ? IsReject<GlobalRejectSettings[Action]>
         : GlobalRejectSettings[Action] extends RejectPerModel
         ? Model extends keyof GlobalRejectSettings[Action]
@@ -701,7 +763,8 @@ export namespace Prisma {
   export interface PrismaClientOptions {
     /**
      * Configure findUnique/findFirst to throw an error if the query returns null. 
-     *  * @example
+     * @deprecated since 4.0.0. Use `findUniqueOrThrow`/`findFirstOrThrow` methods instead.
+     * @example
      * ```
      * // Reject on both findUnique/findFirst
      * rejectOnNotFound: true
@@ -713,7 +776,7 @@ export namespace Prisma {
      */
     rejectOnNotFound?: RejectOnNotFound | RejectPerOperation
     /**
-     * Overwrites the datasource url from your prisma.schema file
+     * Overwrites the datasource url from your schema.prisma file
      */
     datasources?: Datasources
 
@@ -788,6 +851,8 @@ export namespace Prisma {
     | 'queryRaw'
     | 'aggregate'
     | 'count'
+    | 'runCommandRaw'
+    | 'findRaw'
 
   /**
    * These options are being passed in to the middleware as "params"
@@ -809,7 +874,8 @@ export namespace Prisma {
   ) => Promise<T>
 
   // tested in getLogLevel.test.ts
-  export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined; 
+  export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
+
   export type Datasource = {
     url?: string
   }
@@ -844,9 +910,8 @@ export namespace Prisma {
     ? EventCountOutputType 
     : 'select' extends U
     ? {
-    [P in TrueKeys<S['select']>]: P extends keyof EventCountOutputType ?EventCountOutputType [P]
-  : 
-     never
+    [P in TrueKeys<S['select']>]:
+    P extends keyof EventCountOutputType ? EventCountOutputType[P] : never
   } 
     : EventCountOutputType
   : EventCountOutputType
@@ -1058,7 +1123,7 @@ export namespace Prisma {
     _max: ProfileMaxAggregateOutputType | null
   }
 
-  type GetProfileGroupByPayload<T extends ProfileGroupByArgs> = Promise<
+  type GetProfileGroupByPayload<T extends ProfileGroupByArgs> = PrismaPromise<
     Array<
       PickArray<ProfileGroupByOutputType, T['by']> &
         {
@@ -1092,9 +1157,8 @@ export namespace Prisma {
     ? Profile 
     : 'select' extends U
     ? {
-    [P in TrueKeys<S['select']>]: P extends keyof Profile ?Profile [P]
-  : 
-     never
+    [P in TrueKeys<S['select']>]:
+    P extends keyof Profile ? Profile[P] : never
   } 
     : Profile
   : Profile
@@ -1106,7 +1170,7 @@ export namespace Prisma {
     }
   >
 
-  export interface ProfileDelegate<GlobalRejectSettings> {
+  export interface ProfileDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Profile that matches the filter.
      * @param {ProfileFindUniqueArgs} args - Arguments to find a Profile
@@ -1120,7 +1184,7 @@ export namespace Prisma {
     **/
     findUnique<T extends ProfileFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, ProfileFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Profile'> extends True ? CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>> : CheckSelect<T, Prisma__ProfileClient<Profile | null >, Prisma__ProfileClient<ProfileGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Profile'> extends True ? CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>> : CheckSelect<T, Prisma__ProfileClient<Profile | null, null>, Prisma__ProfileClient<ProfileGetPayload<T> | null, null>>
 
     /**
      * Find the first Profile that matches the filter.
@@ -1137,7 +1201,7 @@ export namespace Prisma {
     **/
     findFirst<T extends ProfileFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, ProfileFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Profile'> extends True ? CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>> : CheckSelect<T, Prisma__ProfileClient<Profile | null >, Prisma__ProfileClient<ProfileGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Profile'> extends True ? CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>> : CheckSelect<T, Prisma__ProfileClient<Profile | null, null>, Prisma__ProfileClient<ProfileGetPayload<T> | null, null>>
 
     /**
      * Find zero or more Profiles that matches the filter.
@@ -1285,6 +1349,40 @@ export namespace Prisma {
     ): CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>>
 
     /**
+     * Find one Profile that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {ProfileFindUniqueOrThrowArgs} args - Arguments to find a Profile
+     * @example
+     * // Get one Profile
+     * const profile = await prisma.profile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ProfileFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, ProfileFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>>
+
+    /**
+     * Find the first Profile that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfileFindFirstOrThrowArgs} args - Arguments to find a Profile
+     * @example
+     * // Get one Profile
+     * const profile = await prisma.profile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ProfileFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, ProfileFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__ProfileClient<Profile>, Prisma__ProfileClient<ProfileGetPayload<T>>>
+
+    /**
      * Count the number of Profiles.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
@@ -1408,7 +1506,8 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, ProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfileGroupByPayload<T> : Promise<InputErrors>
+    >(args: SubsetIntersection<T, ProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfileGroupByPayload<T> : PrismaPromise<InputErrors>
+
   }
 
   /**
@@ -1417,7 +1516,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__ProfileClient<T> implements PrismaPromise<T> {
+  export class Prisma__ProfileClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -1458,22 +1557,19 @@ export namespace Prisma {
     finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
+
+
   // Custom InputTypes
 
   /**
-   * Profile findUnique
+   * Profile base type for findUnique actions
    */
-  export type ProfileFindUniqueArgs = {
+  export type ProfileFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the Profile
      * 
     **/
     select?: ProfileSelect | null
-    /**
-     * Throw an Error if a Profile can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which Profile to fetch.
      * 
@@ -1481,21 +1577,27 @@ export namespace Prisma {
     where: ProfileWhereUniqueInput
   }
 
+  /**
+   * Profile: findUnique
+   */
+  export interface ProfileFindUniqueArgs extends ProfileFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
-   * Profile findFirst
+   * Profile base type for findFirst actions
    */
-  export type ProfileFindFirstArgs = {
+  export type ProfileFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the Profile
      * 
     **/
     select?: ProfileSelect | null
-    /**
-     * Throw an Error if a Profile can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which Profile to fetch.
      * 
@@ -1538,6 +1640,17 @@ export namespace Prisma {
     distinct?: Enumerable<ProfileScalarFieldEnum>
   }
 
+  /**
+   * Profile: findFirst
+   */
+  export interface ProfileFindFirstArgs extends ProfileFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
    * Profile findMany
@@ -1606,6 +1719,10 @@ export namespace Prisma {
    * Profile createMany
    */
   export type ProfileCreateManyArgs = {
+    /**
+     * The data used to create many Profiles.
+     * 
+    **/
     data: Enumerable<ProfileCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -1637,7 +1754,15 @@ export namespace Prisma {
    * Profile updateMany
    */
   export type ProfileUpdateManyArgs = {
+    /**
+     * The data used to update Profiles.
+     * 
+    **/
     data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which Profiles to update
+     * 
+    **/
     where?: ProfileWhereInput
   }
 
@@ -1690,9 +1815,25 @@ export namespace Prisma {
    * Profile deleteMany
    */
   export type ProfileDeleteManyArgs = {
+    /**
+     * Filter which Profiles to delete
+     * 
+    **/
     where?: ProfileWhereInput
   }
 
+
+  /**
+   * Profile: findUniqueOrThrow
+   */
+  export type ProfileFindUniqueOrThrowArgs = ProfileFindUniqueArgsBase
+      
+
+  /**
+   * Profile: findFirstOrThrow
+   */
+  export type ProfileFindFirstOrThrowArgs = ProfileFindFirstArgsBase
+      
 
   /**
    * Profile without action
@@ -1931,7 +2072,7 @@ export namespace Prisma {
     _max: EventMaxAggregateOutputType | null
   }
 
-  type GetEventGroupByPayload<T extends EventGroupByArgs> = Promise<
+  type GetEventGroupByPayload<T extends EventGroupByArgs> = PrismaPromise<
     Array<
       PickArray<EventGroupByOutputType, T['by']> &
         {
@@ -1975,20 +2116,15 @@ export namespace Prisma {
     : S extends EventArgs | EventFindManyArgs
     ?'include' extends U
     ? Event  & {
-    [P in TrueKeys<S['include']>]: 
-          P extends 'tickets'
-        ? Array < EventRegistrationGetPayload<S['include'][P]>>  :
-        P extends '_count'
-        ? EventCountOutputTypeGetPayload<S['include'][P]> : never
+    [P in TrueKeys<S['include']>]:
+        P extends 'tickets' ? Array < EventRegistrationGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
     ? {
-    [P in TrueKeys<S['select']>]: P extends keyof Event ?Event [P]
-  : 
-          P extends 'tickets'
-        ? Array < EventRegistrationGetPayload<S['select'][P]>>  :
-        P extends '_count'
-        ? EventCountOutputTypeGetPayload<S['select'][P]> : never
+    [P in TrueKeys<S['select']>]:
+        P extends 'tickets' ? Array < EventRegistrationGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Event ? Event[P] : never
   } 
     : Event
   : Event
@@ -2000,7 +2136,7 @@ export namespace Prisma {
     }
   >
 
-  export interface EventDelegate<GlobalRejectSettings> {
+  export interface EventDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one Event that matches the filter.
      * @param {EventFindUniqueArgs} args - Arguments to find a Event
@@ -2014,7 +2150,7 @@ export namespace Prisma {
     **/
     findUnique<T extends EventFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, EventFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null >, Prisma__EventClient<EventGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null, null>, Prisma__EventClient<EventGetPayload<T> | null, null>>
 
     /**
      * Find the first Event that matches the filter.
@@ -2031,7 +2167,7 @@ export namespace Prisma {
     **/
     findFirst<T extends EventFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, EventFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null >, Prisma__EventClient<EventGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null, null>, Prisma__EventClient<EventGetPayload<T> | null, null>>
 
     /**
      * Find zero or more Events that matches the filter.
@@ -2179,6 +2315,40 @@ export namespace Prisma {
     ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
 
     /**
+     * Find one Event that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {EventFindUniqueOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, EventFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+
+    /**
+     * Find the first Event that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends EventFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, EventFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+
+    /**
      * Count the number of Events.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
@@ -2302,7 +2472,8 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, EventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventGroupByPayload<T> : Promise<InputErrors>
+    >(args: SubsetIntersection<T, EventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventGroupByPayload<T> : PrismaPromise<InputErrors>
+
   }
 
   /**
@@ -2311,7 +2482,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__EventClient<T> implements PrismaPromise<T> {
+  export class Prisma__EventClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -2328,7 +2499,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    tickets<T extends EventRegistrationFindManyArgs = {}>(args?: Subset<T, EventRegistrationFindManyArgs>): CheckSelect<T, PrismaPromise<Array<EventRegistration>>, PrismaPromise<Array<EventRegistrationGetPayload<T>>>>;
+    tickets<T extends EventRegistrationFindManyArgs = {}>(args?: Subset<T, EventRegistrationFindManyArgs>): CheckSelect<T, PrismaPromise<Array<EventRegistration>| Null>, PrismaPromise<Array<EventRegistrationGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -2353,12 +2524,14 @@ export namespace Prisma {
     finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
+
+
   // Custom InputTypes
 
   /**
-   * Event findUnique
+   * Event base type for findUnique actions
    */
-  export type EventFindUniqueArgs = {
+  export type EventFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the Event
      * 
@@ -2369,11 +2542,6 @@ export namespace Prisma {
      * 
     **/
     include?: EventInclude | null
-    /**
-     * Throw an Error if a Event can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which Event to fetch.
      * 
@@ -2381,11 +2549,22 @@ export namespace Prisma {
     where: EventWhereUniqueInput
   }
 
+  /**
+   * Event: findUnique
+   */
+  export interface EventFindUniqueArgs extends EventFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
-   * Event findFirst
+   * Event base type for findFirst actions
    */
-  export type EventFindFirstArgs = {
+  export type EventFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the Event
      * 
@@ -2396,11 +2575,6 @@ export namespace Prisma {
      * 
     **/
     include?: EventInclude | null
-    /**
-     * Throw an Error if a Event can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which Event to fetch.
      * 
@@ -2443,6 +2617,17 @@ export namespace Prisma {
     distinct?: Enumerable<EventScalarFieldEnum>
   }
 
+  /**
+   * Event: findFirst
+   */
+  export interface EventFindFirstArgs extends EventFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
    * Event findMany
@@ -2521,6 +2706,10 @@ export namespace Prisma {
    * Event createMany
    */
   export type EventCreateManyArgs = {
+    /**
+     * The data used to create many Events.
+     * 
+    **/
     data: Enumerable<EventCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -2557,7 +2746,15 @@ export namespace Prisma {
    * Event updateMany
    */
   export type EventUpdateManyArgs = {
+    /**
+     * The data used to update Events.
+     * 
+    **/
     data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyInput>
+    /**
+     * Filter which Events to update
+     * 
+    **/
     where?: EventWhereInput
   }
 
@@ -2620,9 +2817,25 @@ export namespace Prisma {
    * Event deleteMany
    */
   export type EventDeleteManyArgs = {
+    /**
+     * Filter which Events to delete
+     * 
+    **/
     where?: EventWhereInput
   }
 
+
+  /**
+   * Event: findUniqueOrThrow
+   */
+  export type EventFindUniqueOrThrowArgs = EventFindUniqueArgsBase
+      
+
+  /**
+   * Event: findFirstOrThrow
+   */
+  export type EventFindFirstOrThrowArgs = EventFindFirstArgsBase
+      
 
   /**
    * Event without action
@@ -2841,7 +3054,7 @@ export namespace Prisma {
     _max: EventRegistrationMaxAggregateOutputType | null
   }
 
-  type GetEventRegistrationGroupByPayload<T extends EventRegistrationGroupByArgs> = Promise<
+  type GetEventRegistrationGroupByPayload<T extends EventRegistrationGroupByArgs> = PrismaPromise<
     Array<
       PickArray<EventRegistrationGroupByOutputType, T['by']> &
         {
@@ -2880,16 +3093,13 @@ export namespace Prisma {
     : S extends EventRegistrationArgs | EventRegistrationFindManyArgs
     ?'include' extends U
     ? EventRegistration  & {
-    [P in TrueKeys<S['include']>]: 
-          P extends 'event'
-        ? EventGetPayload<S['include'][P]> : never
+    [P in TrueKeys<S['include']>]:
+        P extends 'event' ? EventGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
     ? {
-    [P in TrueKeys<S['select']>]: P extends keyof EventRegistration ?EventRegistration [P]
-  : 
-          P extends 'event'
-        ? EventGetPayload<S['select'][P]> : never
+    [P in TrueKeys<S['select']>]:
+        P extends 'event' ? EventGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof EventRegistration ? EventRegistration[P] : never
   } 
     : EventRegistration
   : EventRegistration
@@ -2901,7 +3111,7 @@ export namespace Prisma {
     }
   >
 
-  export interface EventRegistrationDelegate<GlobalRejectSettings> {
+  export interface EventRegistrationDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one EventRegistration that matches the filter.
      * @param {EventRegistrationFindUniqueArgs} args - Arguments to find a EventRegistration
@@ -2915,7 +3125,7 @@ export namespace Prisma {
     **/
     findUnique<T extends EventRegistrationFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, EventRegistrationFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'EventRegistration'> extends True ? CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>> : CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration | null >, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'EventRegistration'> extends True ? CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>> : CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration | null, null>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T> | null, null>>
 
     /**
      * Find the first EventRegistration that matches the filter.
@@ -2932,7 +3142,7 @@ export namespace Prisma {
     **/
     findFirst<T extends EventRegistrationFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, EventRegistrationFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'EventRegistration'> extends True ? CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>> : CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration | null >, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'EventRegistration'> extends True ? CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>> : CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration | null, null>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T> | null, null>>
 
     /**
      * Find zero or more EventRegistrations that matches the filter.
@@ -3080,6 +3290,40 @@ export namespace Prisma {
     ): CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>>
 
     /**
+     * Find one EventRegistration that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {EventRegistrationFindUniqueOrThrowArgs} args - Arguments to find a EventRegistration
+     * @example
+     * // Get one EventRegistration
+     * const eventRegistration = await prisma.eventRegistration.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends EventRegistrationFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, EventRegistrationFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>>
+
+    /**
+     * Find the first EventRegistration that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventRegistrationFindFirstOrThrowArgs} args - Arguments to find a EventRegistration
+     * @example
+     * // Get one EventRegistration
+     * const eventRegistration = await prisma.eventRegistration.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends EventRegistrationFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, EventRegistrationFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__EventRegistrationClient<EventRegistration>, Prisma__EventRegistrationClient<EventRegistrationGetPayload<T>>>
+
+    /**
      * Count the number of EventRegistrations.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
@@ -3203,7 +3447,8 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, EventRegistrationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventRegistrationGroupByPayload<T> : Promise<InputErrors>
+    >(args: SubsetIntersection<T, EventRegistrationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventRegistrationGroupByPayload<T> : PrismaPromise<InputErrors>
+
   }
 
   /**
@@ -3212,7 +3457,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__EventRegistrationClient<T> implements PrismaPromise<T> {
+  export class Prisma__EventRegistrationClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -3229,7 +3474,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    event<T extends EventArgs = {}>(args?: Subset<T, EventArgs>): CheckSelect<T, Prisma__EventClient<Event | null >, Prisma__EventClient<EventGetPayload<T> | null >>;
+    event<T extends EventArgs = {}>(args?: Subset<T, EventArgs>): CheckSelect<T, Prisma__EventClient<Event | Null>, Prisma__EventClient<EventGetPayload<T> | Null>>;
 
     private get _document();
     /**
@@ -3254,12 +3499,14 @@ export namespace Prisma {
     finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
+
+
   // Custom InputTypes
 
   /**
-   * EventRegistration findUnique
+   * EventRegistration base type for findUnique actions
    */
-  export type EventRegistrationFindUniqueArgs = {
+  export type EventRegistrationFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the EventRegistration
      * 
@@ -3270,11 +3517,6 @@ export namespace Prisma {
      * 
     **/
     include?: EventRegistrationInclude | null
-    /**
-     * Throw an Error if a EventRegistration can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which EventRegistration to fetch.
      * 
@@ -3282,11 +3524,22 @@ export namespace Prisma {
     where: EventRegistrationWhereUniqueInput
   }
 
+  /**
+   * EventRegistration: findUnique
+   */
+  export interface EventRegistrationFindUniqueArgs extends EventRegistrationFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
-   * EventRegistration findFirst
+   * EventRegistration base type for findFirst actions
    */
-  export type EventRegistrationFindFirstArgs = {
+  export type EventRegistrationFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the EventRegistration
      * 
@@ -3297,11 +3550,6 @@ export namespace Prisma {
      * 
     **/
     include?: EventRegistrationInclude | null
-    /**
-     * Throw an Error if a EventRegistration can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which EventRegistration to fetch.
      * 
@@ -3344,6 +3592,17 @@ export namespace Prisma {
     distinct?: Enumerable<EventRegistrationScalarFieldEnum>
   }
 
+  /**
+   * EventRegistration: findFirst
+   */
+  export interface EventRegistrationFindFirstArgs extends EventRegistrationFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
    * EventRegistration findMany
@@ -3422,6 +3681,10 @@ export namespace Prisma {
    * EventRegistration createMany
    */
   export type EventRegistrationCreateManyArgs = {
+    /**
+     * The data used to create many EventRegistrations.
+     * 
+    **/
     data: Enumerable<EventRegistrationCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -3458,7 +3721,15 @@ export namespace Prisma {
    * EventRegistration updateMany
    */
   export type EventRegistrationUpdateManyArgs = {
+    /**
+     * The data used to update EventRegistrations.
+     * 
+    **/
     data: XOR<EventRegistrationUpdateManyMutationInput, EventRegistrationUncheckedUpdateManyInput>
+    /**
+     * Filter which EventRegistrations to update
+     * 
+    **/
     where?: EventRegistrationWhereInput
   }
 
@@ -3521,9 +3792,25 @@ export namespace Prisma {
    * EventRegistration deleteMany
    */
   export type EventRegistrationDeleteManyArgs = {
+    /**
+     * Filter which EventRegistrations to delete
+     * 
+    **/
     where?: EventRegistrationWhereInput
   }
 
+
+  /**
+   * EventRegistration: findUniqueOrThrow
+   */
+  export type EventRegistrationFindUniqueOrThrowArgs = EventRegistrationFindUniqueArgsBase
+      
+
+  /**
+   * EventRegistration: findFirstOrThrow
+   */
+  export type EventRegistrationFindFirstOrThrowArgs = EventRegistrationFindFirstArgsBase
+      
 
   /**
    * EventRegistration without action
@@ -3753,7 +4040,7 @@ export namespace Prisma {
     _max: JobAdMaxAggregateOutputType | null
   }
 
-  type GetJobAdGroupByPayload<T extends JobAdGroupByArgs> = Promise<
+  type GetJobAdGroupByPayload<T extends JobAdGroupByArgs> = PrismaPromise<
     Array<
       PickArray<JobAdGroupByOutputType, T['by']> &
         {
@@ -3790,9 +4077,8 @@ export namespace Prisma {
     ? JobAd 
     : 'select' extends U
     ? {
-    [P in TrueKeys<S['select']>]: P extends keyof JobAd ?JobAd [P]
-  : 
-     never
+    [P in TrueKeys<S['select']>]:
+    P extends keyof JobAd ? JobAd[P] : never
   } 
     : JobAd
   : JobAd
@@ -3804,7 +4090,7 @@ export namespace Prisma {
     }
   >
 
-  export interface JobAdDelegate<GlobalRejectSettings> {
+  export interface JobAdDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
     /**
      * Find zero or one JobAd that matches the filter.
      * @param {JobAdFindUniqueArgs} args - Arguments to find a JobAd
@@ -3818,7 +4104,7 @@ export namespace Prisma {
     **/
     findUnique<T extends JobAdFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, JobAdFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'JobAd'> extends True ? CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>> : CheckSelect<T, Prisma__JobAdClient<JobAd | null >, Prisma__JobAdClient<JobAdGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'JobAd'> extends True ? CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>> : CheckSelect<T, Prisma__JobAdClient<JobAd | null, null>, Prisma__JobAdClient<JobAdGetPayload<T> | null, null>>
 
     /**
      * Find the first JobAd that matches the filter.
@@ -3835,7 +4121,7 @@ export namespace Prisma {
     **/
     findFirst<T extends JobAdFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, JobAdFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'JobAd'> extends True ? CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>> : CheckSelect<T, Prisma__JobAdClient<JobAd | null >, Prisma__JobAdClient<JobAdGetPayload<T> | null >>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'JobAd'> extends True ? CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>> : CheckSelect<T, Prisma__JobAdClient<JobAd | null, null>, Prisma__JobAdClient<JobAdGetPayload<T> | null, null>>
 
     /**
      * Find zero or more JobAds that matches the filter.
@@ -3983,6 +4269,40 @@ export namespace Prisma {
     ): CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>>
 
     /**
+     * Find one JobAd that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {JobAdFindUniqueOrThrowArgs} args - Arguments to find a JobAd
+     * @example
+     * // Get one JobAd
+     * const jobAd = await prisma.jobAd.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends JobAdFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, JobAdFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>>
+
+    /**
+     * Find the first JobAd that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {JobAdFindFirstOrThrowArgs} args - Arguments to find a JobAd
+     * @example
+     * // Get one JobAd
+     * const jobAd = await prisma.jobAd.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends JobAdFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, JobAdFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__JobAdClient<JobAd>, Prisma__JobAdClient<JobAdGetPayload<T>>>
+
+    /**
      * Count the number of JobAds.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
@@ -4106,7 +4426,8 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, JobAdGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobAdGroupByPayload<T> : Promise<InputErrors>
+    >(args: SubsetIntersection<T, JobAdGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetJobAdGroupByPayload<T> : PrismaPromise<InputErrors>
+
   }
 
   /**
@@ -4115,7 +4436,7 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export class Prisma__JobAdClient<T> implements PrismaPromise<T> {
+  export class Prisma__JobAdClient<T, Null = never> implements PrismaPromise<T> {
     [prisma]: true;
     private readonly _dmmf;
     private readonly _fetcher;
@@ -4156,22 +4477,19 @@ export namespace Prisma {
     finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
+
+
   // Custom InputTypes
 
   /**
-   * JobAd findUnique
+   * JobAd base type for findUnique actions
    */
-  export type JobAdFindUniqueArgs = {
+  export type JobAdFindUniqueArgsBase = {
     /**
      * Select specific fields to fetch from the JobAd
      * 
     **/
     select?: JobAdSelect | null
-    /**
-     * Throw an Error if a JobAd can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which JobAd to fetch.
      * 
@@ -4179,21 +4497,27 @@ export namespace Prisma {
     where: JobAdWhereUniqueInput
   }
 
+  /**
+   * JobAd: findUnique
+   */
+  export interface JobAdFindUniqueArgs extends JobAdFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
-   * JobAd findFirst
+   * JobAd base type for findFirst actions
    */
-  export type JobAdFindFirstArgs = {
+  export type JobAdFindFirstArgsBase = {
     /**
      * Select specific fields to fetch from the JobAd
      * 
     **/
     select?: JobAdSelect | null
-    /**
-     * Throw an Error if a JobAd can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
     /**
      * Filter, which JobAd to fetch.
      * 
@@ -4236,6 +4560,17 @@ export namespace Prisma {
     distinct?: Enumerable<JobAdScalarFieldEnum>
   }
 
+  /**
+   * JobAd: findFirst
+   */
+  export interface JobAdFindFirstArgs extends JobAdFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
 
   /**
    * JobAd findMany
@@ -4304,6 +4639,10 @@ export namespace Prisma {
    * JobAd createMany
    */
   export type JobAdCreateManyArgs = {
+    /**
+     * The data used to create many JobAds.
+     * 
+    **/
     data: Enumerable<JobAdCreateManyInput>
     skipDuplicates?: boolean
   }
@@ -4335,7 +4674,15 @@ export namespace Prisma {
    * JobAd updateMany
    */
   export type JobAdUpdateManyArgs = {
+    /**
+     * The data used to update JobAds.
+     * 
+    **/
     data: XOR<JobAdUpdateManyMutationInput, JobAdUncheckedUpdateManyInput>
+    /**
+     * Filter which JobAds to update
+     * 
+    **/
     where?: JobAdWhereInput
   }
 
@@ -4388,9 +4735,25 @@ export namespace Prisma {
    * JobAd deleteMany
    */
   export type JobAdDeleteManyArgs = {
+    /**
+     * Filter which JobAds to delete
+     * 
+    **/
     where?: JobAdWhereInput
   }
 
+
+  /**
+   * JobAd: findUniqueOrThrow
+   */
+  export type JobAdFindUniqueOrThrowArgs = JobAdFindUniqueArgsBase
+      
+
+  /**
+   * JobAd: findFirstOrThrow
+   */
+  export type JobAdFindFirstOrThrowArgs = JobAdFindFirstArgsBase
+      
 
   /**
    * JobAd without action
@@ -4412,15 +4775,17 @@ export namespace Prisma {
   // Based on
   // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
-  export const ProfileScalarFieldEnum: {
-    id: 'id',
+  export const EventRegistrationScalarFieldEnum: {
+    eventId: 'eventId',
     name: 'name',
-    title: 'title',
     email: 'email',
-    imageUrl: 'imageUrl'
+    foodPreferences: 'foodPreferences',
+    timestamp: 'timestamp',
+    verificationCode: 'verificationCode',
+    attended: 'attended'
   };
 
-  export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+  export type EventRegistrationScalarFieldEnum = (typeof EventRegistrationScalarFieldEnum)[keyof typeof EventRegistrationScalarFieldEnum]
 
 
   export const EventScalarFieldEnum: {
@@ -4439,19 +4804,6 @@ export namespace Prisma {
   export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
 
 
-  export const EventRegistrationScalarFieldEnum: {
-    eventId: 'eventId',
-    name: 'name',
-    email: 'email',
-    foodPreferences: 'foodPreferences',
-    timestamp: 'timestamp',
-    verificationCode: 'verificationCode',
-    attended: 'attended'
-  };
-
-  export type EventRegistrationScalarFieldEnum = (typeof EventRegistrationScalarFieldEnum)[keyof typeof EventRegistrationScalarFieldEnum]
-
-
   export const JobAdScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -4466,12 +4818,15 @@ export namespace Prisma {
   export type JobAdScalarFieldEnum = (typeof JobAdScalarFieldEnum)[keyof typeof JobAdScalarFieldEnum]
 
 
-  export const SortOrder: {
-    asc: 'asc',
-    desc: 'desc'
+  export const ProfileScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    title: 'title',
+    email: 'email',
+    imageUrl: 'imageUrl'
   };
 
-  export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+  export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
 
 
   export const QueryMode: {
@@ -4480,6 +4835,24 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const SortOrder: {
+    asc: 'asc',
+    desc: 'desc'
+  };
+
+  export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const TransactionIsolationLevel: {
+    ReadUncommitted: 'ReadUncommitted',
+    ReadCommitted: 'ReadCommitted',
+    RepeatableRead: 'RepeatableRead',
+    Serializable: 'Serializable'
+  };
+
+  export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
   /**
@@ -4809,7 +5182,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
-    tickets?: EventRegistrationUpdateManyWithoutEventInput
+    tickets?: EventRegistrationUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateInput = {
@@ -4823,7 +5196,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
-    tickets?: EventRegistrationUncheckedUpdateManyWithoutEventInput
+    tickets?: EventRegistrationUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateManyInput = {
@@ -4891,7 +5264,7 @@ export namespace Prisma {
     timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
     verificationCode?: StringFieldUpdateOperationsInput | string
     attended?: BoolFieldUpdateOperationsInput | boolean
-    event?: EventUpdateOneRequiredWithoutTicketsInput
+    event?: EventUpdateOneRequiredWithoutTicketsNestedInput
   }
 
   export type EventRegistrationUncheckedUpdateInput = {
@@ -5353,7 +5726,7 @@ export namespace Prisma {
     set?: boolean
   }
 
-  export type EventRegistrationUpdateManyWithoutEventInput = {
+  export type EventRegistrationUpdateManyWithoutEventNestedInput = {
     create?: XOR<Enumerable<EventRegistrationCreateWithoutEventInput>, Enumerable<EventRegistrationUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<EventRegistrationCreateOrConnectWithoutEventInput>
     upsert?: Enumerable<EventRegistrationUpsertWithWhereUniqueWithoutEventInput>
@@ -5367,7 +5740,7 @@ export namespace Prisma {
     deleteMany?: Enumerable<EventRegistrationScalarWhereInput>
   }
 
-  export type EventRegistrationUncheckedUpdateManyWithoutEventInput = {
+  export type EventRegistrationUncheckedUpdateManyWithoutEventNestedInput = {
     create?: XOR<Enumerable<EventRegistrationCreateWithoutEventInput>, Enumerable<EventRegistrationUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<EventRegistrationCreateOrConnectWithoutEventInput>
     upsert?: Enumerable<EventRegistrationUpsertWithWhereUniqueWithoutEventInput>
@@ -5387,7 +5760,7 @@ export namespace Prisma {
     connect?: EventWhereUniqueInput
   }
 
-  export type EventUpdateOneRequiredWithoutTicketsInput = {
+  export type EventUpdateOneRequiredWithoutTicketsNestedInput = {
     create?: XOR<EventCreateWithoutTicketsInput, EventUncheckedCreateWithoutTicketsInput>
     connectOrCreate?: EventCreateOrConnectWithoutTicketsInput
     upsert?: EventUpsertWithoutTicketsInput
@@ -5710,5 +6083,5 @@ export namespace Prisma {
   /**
    * DMMF
    */
-  export const dmmf: runtime.DMMF.Document;
+  export const dmmf: runtime.BaseDMMF
 }

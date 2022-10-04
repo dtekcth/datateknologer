@@ -1,8 +1,7 @@
-/// <reference types="node" />
+declare type Action = keyof typeof DMMF.ModelAction | 'executeRaw' | 'queryRaw' | 'runCommandRaw';
 
-import { inspect } from 'util';
-
-declare type Action = DMMF.ModelAction | 'executeRaw' | 'queryRaw';
+declare class AnyNull extends NullTypesEnumValue {
+}
 
 declare class Arg {
     key: string;
@@ -59,34 +58,81 @@ declare interface AtMostOneError {
     providedKeys: string[];
 }
 
+export declare type BaseDMMF = Pick<DMMF.Document, 'datamodel' | 'mappings'>;
+
+declare interface BaseDMMFHelper extends DMMFDatamodelHelper, DMMFMappingsHelper {
+}
+
+declare class BaseDMMFHelper {
+    constructor(dmmf: BaseDMMF);
+}
+
+declare type BatchTransactionOptions = {
+    isolationLevel?: Transaction.IsolationLevel;
+};
+
 declare interface BinaryTargetsEnvValue {
     fromEnvVar: null | string;
     value: string;
 }
 
-declare interface Client_2 {
-    _dmmf: DMMFClass;
+declare interface CallSite {
+    getLocation(): LocationInFile | null;
+}
+
+declare interface Client {
+    /** Only via tx proxy */
+    [TX_ID]?: string;
+    _baseDmmf: BaseDMMFHelper;
+    _dmmf?: DMMFClass;
     _engine: Engine;
-    _fetcher: PrismaClientFetcher;
+    _fetcher: RequestHandler;
     _connectionPromise?: Promise<any>;
     _disconnectionPromise?: Promise<any>;
     _engineConfig: EngineConfig;
     _clientVersion: string;
     _errorFormat: ErrorFormat;
+    _tracingConfig: TracingConfig;
+    readonly $metrics: MetricsClient;
     $use<T>(arg0: Namespace | QueryMiddleware<T>, arg1?: QueryMiddleware | EngineMiddleware<T>): any;
     $on(eventType: EngineEventType, callback: (event: any) => void): any;
     $connect(): any;
     $disconnect(): any;
     _runDisconnect(): any;
-    $executeRaw(query: TemplateStringsArray | sqlTemplateTag.Sql, ...values: any[]): any;
-    $queryRaw(query: TemplateStringsArray | sqlTemplateTag.Sql, ...values: any[]): any;
+    $executeRaw(query: TemplateStringsArray | Sql, ...values: any[]): any;
+    $queryRaw(query: TemplateStringsArray | Sql, ...values: any[]): any;
     __internal_triggerPanic(fatal: boolean): any;
     $transaction(input: any, options?: any): any;
+    _request(internalParams: InternalRequestParams): Promise<any>;
 }
 
-declare type ConnectorType = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'sqlserver';
+declare type ConnectorType = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'sqlserver' | 'jdbc:sqlserver' | 'cockroachdb';
 
-declare type ConnectorType_2 = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'sqlserver' | 'jdbc:sqlserver';
+declare type ConnectorType_2 = 'mysql' | 'mongodb' | 'sqlite' | 'postgresql' | 'sqlserver' | 'jdbc:sqlserver' | 'cockroachdb';
+
+declare interface Context {
+    /**
+     * Get a value from the context.
+     *
+     * @param key key which identifies a context value
+     */
+    getValue(key: symbol): unknown;
+    /**
+     * Create a new context which inherits from this context and has
+     * the given key set to the given value.
+     *
+     * @param key context key for which to set the value
+     * @param value value to set for the given key
+     */
+    setValue(key: symbol, value: unknown): Context;
+    /**
+     * Return a new context which inherits from this context but does
+     * not contain a value for the given key.
+     *
+     * @param key context key for which to clear a value
+     */
+    deleteValue(key: symbol): Context;
+}
 
 declare class DataLoader<T = unknown> {
     private options;
@@ -129,6 +175,27 @@ declare interface DatasourceOverwrite {
 declare type Datasources = {
     [name in string]: Datasource;
 };
+
+declare class DbNull extends NullTypesEnumValue {
+}
+
+export declare interface Debug {
+    (namespace: string): Debugger;
+    disable: () => string;
+    enable: (namespace: string) => void;
+    enabled: (namespace: string) => boolean;
+    log: (...args: any[]) => any;
+    formatters: Record<string, ((value: any) => string) | undefined>;
+}
+
+declare interface Debugger {
+    (format: any, ...args: any[]): void;
+    log: (...args: any[]) => any;
+    extend: (namespace: string, delimiter?: string) => Debugger;
+    color: string | number;
+    enabled: boolean;
+    namespace: string;
+}
 
 export declare namespace Decimal {
     export type Constructor = typeof Decimal;
@@ -350,7 +417,7 @@ export declare class Decimal {
     static exp(n: Decimal.Value): Decimal;
     static floor(n: Decimal.Value): Decimal;
     static hypot(...n: Decimal.Value[]): Decimal;
-    static isDecimal(object: any): boolean
+    static isDecimal(object: any): object is Decimal;
     static ln(n: Decimal.Value): Decimal;
     static log(n: Decimal.Value, base?: Decimal.Value): Decimal;
     static log2(n: Decimal.Value): Decimal;
@@ -398,15 +465,26 @@ export declare class Decimal {
     static readonly EUCLID: 9;
 }
 
-export declare const decompressFromBase64: any;
-
-declare interface Dictionary<T> {
-    [key: string]: T;
+/**
+ * Interface for any Decimal.js-like library
+ * Allows us to accept Decimal.js from different
+ * versions and some compatible alternatives
+ */
+export declare interface DecimalJsLike {
+    d: number[];
+    e: number;
+    s: number;
 }
 
-declare type Dictionary_2<T> = {
+export declare const decompressFromBase64: any;
+
+declare type Dictionary<T> = {
     [key: string]: T;
 };
+
+declare interface Dictionary_2<T> {
+    [key: string]: T;
+}
 
 export declare namespace DMMF {
     export interface Document {
@@ -442,6 +520,7 @@ export declare namespace DMMF {
     export interface Datamodel {
         models: Model[];
         enums: DatamodelEnum[];
+        types: Model[];
     }
     export interface uniqueIndex {
         name: string;
@@ -455,7 +534,6 @@ export declare namespace DMMF {
         name: string;
         dbName: string | null;
         fields: Field[];
-        fieldMap?: Record<string, Field>;
         uniqueFields: string[][];
         uniqueIndexes: uniqueIndex[];
         documentation?: string;
@@ -464,7 +542,7 @@ export declare namespace DMMF {
     }
     export type FieldKind = 'scalar' | 'object' | 'enum' | 'unsupported';
     export type FieldNamespace = 'model' | 'prisma';
-    export type FieldLocation = 'scalar' | 'inputObjectTypes' | 'outputObjectTypes' | 'enumTypes';
+    export type FieldLocation = 'scalar' | 'inputObjectTypes' | 'outputObjectTypes' | 'enumTypes' | 'fieldRefTypes';
     export interface Field {
         kind: FieldKind;
         name: string;
@@ -473,12 +551,16 @@ export declare namespace DMMF {
         isUnique: boolean;
         isId: boolean;
         isReadOnly: boolean;
-        isGenerated: boolean;
-        isUpdatedAt: boolean;
-        type: string | DMMF.SchemaEnum | DMMF.OutputType | DMMF.SchemaArg;
+        isGenerated?: boolean;
+        isUpdatedAt?: boolean;
+        /**
+         * Describes the data type in the same the way is is defined in the Prisma schema:
+         * BigInt, Boolean, Bytes, DateTime, Decimal, Float, Int, JSON, String, $ModelName
+         */
+        type: string;
         dbNames?: string[] | null;
         hasDefaultValue: boolean;
-        default?: FieldDefault | string | boolean | number;
+        default?: FieldDefault | FieldDefaultScalar | FieldDefaultScalar[];
         relationFromFields?: string[];
         relationToFields?: any[];
         relationOnDelete?: string;
@@ -490,6 +572,7 @@ export declare namespace DMMF {
         name: string;
         args: any[];
     }
+    export type FieldDefaultScalar = string | boolean | number;
     export interface Schema {
         rootQueryType?: string;
         rootMutationType?: string;
@@ -504,6 +587,9 @@ export declare namespace DMMF {
         enumTypes: {
             model?: SchemaEnum[];
             prisma: SchemaEnum[];
+        };
+        fieldRefTypes: {
+            prisma?: FieldRefType[];
         };
     }
     export interface Query {
@@ -539,16 +625,28 @@ export declare namespace DMMF {
     export interface SchemaField {
         name: string;
         isNullable?: boolean;
-        outputType: {
-            type: string | OutputType | SchemaEnum;
-            isList: boolean;
-            location: FieldLocation;
-            namespace?: FieldNamespace;
-        };
+        outputType: OutputTypeRef;
         args: SchemaArg[];
         deprecation?: Deprecation;
         documentation?: string;
     }
+    export type TypeRefCommon = {
+        isList: boolean;
+        namespace?: FieldNamespace;
+    };
+    export type TypeRefScalar = TypeRefCommon & {
+        location: 'scalar';
+        type: string;
+    };
+    export type TypeRefOutputObject = TypeRefCommon & {
+        location: 'outputObjectTypes';
+        type: OutputType | string;
+    };
+    export type TypeRefEnum = TypeRefCommon & {
+        location: 'enumTypes';
+        type: SchemaEnum | string;
+    };
+    export type OutputTypeRef = TypeRefScalar | TypeRefOutputObject | TypeRefEnum;
     export interface Deprecation {
         sinceVersion: string;
         reason: string;
@@ -560,9 +658,18 @@ export declare namespace DMMF {
             maxNumFields: number | null;
             minNumFields: number | null;
         };
+        meta?: {
+            source?: string;
+        };
         fields: SchemaArg[];
         fieldMap?: Record<string, SchemaArg>;
     }
+    export interface FieldRefType {
+        name: string;
+        allowTypes: FieldRefAllowType[];
+        fields: SchemaArg[];
+    }
+    export type FieldRefAllowType = TypeRefScalar | TypeRefEnum;
     export interface ModelMapping {
         model: string;
         plural: string;
@@ -579,6 +686,8 @@ export declare namespace DMMF {
         aggregate?: string | null;
         groupBy?: string | null;
         count?: string | null;
+        findRaw?: string | null;
+        aggregateRaw?: string | null;
     }
     export enum ModelAction {
         findUnique = "findUnique",
@@ -593,53 +702,75 @@ export declare namespace DMMF {
         deleteMany = "deleteMany",
         groupBy = "groupBy",
         count = "count",
-        aggregate = "aggregate"
+        aggregate = "aggregate",
+        findRaw = "findRaw",
+        aggregateRaw = "aggregateRaw"
     }
 }
 
-export declare class DMMFClass implements DMMF.Document {
+export declare interface DMMFClass extends BaseDMMFHelper, DMMFSchemaHelper {
+}
+
+export declare class DMMFClass {
+    constructor(dmmf: DMMF.Document);
+}
+
+declare class DMMFDatamodelHelper implements Pick<DMMF.Document, 'datamodel'> {
     datamodel: DMMF.Datamodel;
-    schema: DMMF.Schema;
+    datamodelEnumMap: Dictionary_2<DMMF.DatamodelEnum>;
+    modelMap: Dictionary_2<DMMF.Model>;
+    typeMap: Dictionary_2<DMMF.Model>;
+    typeAndModelMap: Dictionary_2<DMMF.Model>;
+    constructor({ datamodel }: Pick<DMMF.Document, 'datamodel'>);
+    getDatamodelEnumMap(): Dictionary_2<DMMF.DatamodelEnum>;
+    getModelMap(): Dictionary_2<DMMF.Model>;
+    getTypeMap(): Dictionary_2<DMMF.Model>;
+    getTypeModelMap(): Dictionary_2<DMMF.Model>;
+}
+
+declare class DMMFMappingsHelper implements Pick<DMMF.Document, 'mappings'> {
     mappings: DMMF.Mappings;
+    mappingsMap: Dictionary_2<DMMF.ModelMapping>;
+    constructor({ mappings }: Pick<DMMF.Document, 'mappings'>);
+    getMappingsMap(): Dictionary_2<DMMF.ModelMapping>;
+}
+
+declare class DMMFSchemaHelper implements Pick<DMMF.Document, 'schema'> {
+    schema: DMMF.Schema;
     queryType: DMMF.OutputType;
     mutationType: DMMF.OutputType;
     outputTypes: {
         model: DMMF.OutputType[];
         prisma: DMMF.OutputType[];
     };
-    outputTypeMap: Dictionary<DMMF.OutputType>;
+    outputTypeMap: Dictionary_2<DMMF.OutputType>;
     inputObjectTypes: {
         model?: DMMF.InputType[];
         prisma: DMMF.InputType[];
     };
-    inputTypeMap: Dictionary<DMMF.InputType>;
-    enumMap: Dictionary<DMMF.SchemaEnum>;
-    datamodelEnumMap: Dictionary<DMMF.DatamodelEnum>;
-    modelMap: Dictionary<DMMF.Model>;
-    mappingsMap: Dictionary<DMMF.ModelMapping>;
-    rootFieldMap: Dictionary<DMMF.SchemaField>;
-    constructor({ datamodel, schema, mappings }: DMMF.Document);
+    inputTypeMap: Dictionary_2<DMMF.InputType>;
+    enumMap: Dictionary_2<DMMF.SchemaEnum>;
+    rootFieldMap: Dictionary_2<DMMF.SchemaField>;
+    constructor({ schema }: Pick<DMMF.Document, 'schema'>);
     get [Symbol.toStringTag](): string;
-    protected outputTypeToMergedOutputType: (outputType: DMMF.OutputType) => DMMF.OutputType;
-    protected resolveOutputTypes(): void;
-    protected resolveInputTypes(): void;
-    protected resolveFieldArgumentTypes(): void;
-    protected getQueryType(): DMMF.OutputType;
-    protected getMutationType(): DMMF.OutputType;
-    protected getOutputTypes(): {
+    outputTypeToMergedOutputType: (outputType: DMMF.OutputType) => DMMF.OutputType;
+    resolveOutputTypes(): void;
+    resolveInputTypes(): void;
+    resolveFieldArgumentTypes(): void;
+    getQueryType(): DMMF.OutputType;
+    getMutationType(): DMMF.OutputType;
+    getOutputTypes(): {
         model: DMMF.OutputType[];
         prisma: DMMF.OutputType[];
     };
-    protected getDatamodelEnumMap(): Dictionary<DMMF.DatamodelEnum>;
-    protected getEnumMap(): Dictionary<DMMF.SchemaEnum>;
-    protected getModelMap(): Dictionary<DMMF.Model>;
-    protected getMergedOutputTypeMap(): Dictionary<DMMF.OutputType>;
-    protected getInputTypeMap(): Dictionary<DMMF.InputType>;
-    protected getMappingsMap(): Dictionary<DMMF.ModelMapping>;
-    protected getRootFieldMap(): Dictionary<DMMF.SchemaField>;
+    getEnumMap(): Dictionary_2<DMMF.SchemaEnum>;
+    hasEnumInNamespace(enumName: string, namespace: 'prisma' | 'model'): boolean;
+    getMergedOutputTypeMap(): Dictionary_2<DMMF.OutputType>;
+    getInputTypeMap(): Dictionary_2<DMMF.InputType>;
+    getRootFieldMap(): Dictionary_2<DMMF.SchemaField>;
 }
 
-declare class Document {
+declare class Document_2 {
     readonly type: 'query' | 'mutation';
     readonly children: Field[];
     constructor(type: 'query' | 'mutation', children: Field[]);
@@ -662,6 +793,7 @@ declare interface DocumentInput {
     rootTypeName: 'query' | 'mutation';
     rootField: string;
     select?: any;
+    modelName?: string;
 }
 
 /**
@@ -684,12 +816,15 @@ export declare abstract class Engine {
     abstract start(): Promise<void>;
     abstract stop(): Promise<void>;
     abstract getConfig(): Promise<GetConfigResult>;
+    abstract getDmmf(): Promise<DMMF.Document>;
     abstract version(forceRun?: boolean): Promise<string> | string;
     abstract request<T>(query: string, headers?: QueryEngineRequestHeaders, numTry?: number): Promise<QueryEngineResult<T>>;
-    abstract requestBatch<T>(queries: string[], headers?: QueryEngineRequestHeaders, transaction?: boolean, numTry?: number): Promise<QueryEngineResult<T>[]>;
-    abstract transaction(action: 'start', options?: Transaction.Options): Promise<Transaction.Info>;
-    abstract transaction(action: 'commit', info: Transaction.Info): Promise<void>;
-    abstract transaction(action: 'rollback', info: Transaction.Info): Promise<void>;
+    abstract requestBatch<T>(queries: string[], headers?: QueryEngineRequestHeaders, transaction?: BatchTransactionOptions, numTry?: number): Promise<QueryEngineResult<T>[]>;
+    abstract transaction(action: 'start', headers: Transaction.TransactionHeaders, options?: Transaction.Options): Promise<Transaction.Info>;
+    abstract transaction(action: 'commit', headers: Transaction.TransactionHeaders, info: Transaction.Info): Promise<void>;
+    abstract transaction(action: 'rollback', headers: Transaction.TransactionHeaders, info: Transaction.Info): Promise<void>;
+    abstract metrics(options: MetricsOptionsJson): Promise<Metrics>;
+    abstract metrics(options: MetricsOptionsPrometheus): Promise<string>;
 }
 
 declare interface EngineConfig {
@@ -708,9 +843,8 @@ declare interface EngineConfig {
     showColors?: boolean;
     logQueries?: boolean;
     logLevel?: 'info' | 'warn';
-    env?: Record<string, string>;
+    env: Record<string, string>;
     flags?: string[];
-    useUds?: boolean;
     clientVersion?: string;
     previewFeatures?: string[];
     engineEndpoint?: string;
@@ -724,12 +858,17 @@ declare interface EngineConfig {
      * The contents of the datasource url saved in a string
      * @remarks only used for the purpose of data proxy
      */
-    inlineDatasources?: any;
+    inlineDatasources?: Record<string, InlineDatasource>;
     /**
      * The string hash that was produced for a given schema
      * @remarks only used for the purpose of data proxy
      */
     inlineSchemaHash?: string;
+    /**
+     * The configuration object for enabling tracing
+     * @remarks enabling is determined by the client
+     */
+    tracingConfig: TracingConfig;
 }
 
 declare type EngineEventType = 'query' | 'info' | 'warn' | 'error' | 'beforeExit';
@@ -743,7 +882,7 @@ declare type EngineMiddleware<T = unknown> = (params: EngineMiddlewareParams, ne
 }>;
 
 declare type EngineMiddlewareParams = {
-    document: Document;
+    document: Document_2;
     runInTransaction?: boolean;
 };
 
@@ -790,6 +929,16 @@ declare interface FieldError {
 }
 
 /**
+ * A reference to a specific field of a specific model
+ */
+export declare interface FieldRef<Model, FieldType> {
+    readonly modelName: Model;
+    readonly name: string;
+    readonly typeName: FieldType;
+    readonly isList: boolean;
+}
+
+/**
  * Find paths that match a set of regexes
  * @param root to start from
  * @param match to match against
@@ -808,7 +957,7 @@ declare interface GeneratorConfig {
     output: EnvValue | null;
     isCustomOutput?: boolean;
     provider: EnvValue;
-    config: Dictionary_2<string>;
+    config: Dictionary<string>;
     binaryTargets: BinaryTargetsEnvValue[];
     previewFeatures: string[];
 }
@@ -818,7 +967,7 @@ declare type GetConfigResult = {
     generators: GeneratorConfig[];
 };
 
-export declare function getPrismaClient(config: GetPrismaClientConfig): new (optionsArg?: PrismaClientOptions | undefined) => Client_2;
+export declare function getPrismaClient(config: GetPrismaClientConfig): new (optionsArg?: PrismaClientOptions) => Client;
 
 /**
  * Config that is stored into the generated client. When the generated client is
@@ -826,7 +975,7 @@ export declare function getPrismaClient(config: GetPrismaClientConfig): new (opt
  * closure with that config around a non-instantiated [[PrismaClient]].
  */
 declare interface GetPrismaClientConfig {
-    document: DMMF.Document;
+    document: Omit<DMMF.Document, 'schema'>;
     generator?: GeneratorConfig;
     sqliteDatasourceOverrides?: DatasourceOverwrite[];
     relativeEnvPaths: {
@@ -835,22 +984,33 @@ declare interface GetPrismaClientConfig {
     };
     relativePath: string;
     dirname: string;
+    filename?: string;
     clientVersion?: string;
     engineVersion?: string;
     datasourceNames: string[];
     activeProvider: string;
+    /**
+     * True when `--data-proxy` is passed to `prisma generate`
+     * If enabled, we disregard the generator config engineType.
+     * It means that `--data-proxy` binds you to the Data Proxy.
+     */
+    dataProxy: boolean;
     /**
      * The contents of the schema encoded into a string
      * @remarks only used for the purpose of data proxy
      */
     inlineSchema?: string;
     /**
-     * The contents of the env saved into a special object
+     * A special env object just for the data proxy edge runtime.
+     * Allows bundlers to inject their own env variables (Vercel).
+     * Allows platforms to declare global variables as env (Workers).
      * @remarks only used for the purpose of data proxy
      */
-    inlineEnv?: LoadedEnv;
+    injectableEdgeEnv?: LoadedEnv;
     /**
-     * The contents of the datasource url saved in a string
+     * The contents of the datasource url saved in a string.
+     * This can either be an env var name or connection string.
+     * It is needed by the client to connect to the Data Proxy.
      * @remarks only used for the purpose of data proxy
      */
     inlineDatasources?: InlineDatasources;
@@ -860,6 +1020,12 @@ declare interface GetPrismaClientConfig {
      */
     inlineSchemaHash?: string;
 }
+
+declare type HandleErrorParams = {
+    error: any;
+    clientMethod: string;
+    callsite?: CallSite;
+};
 
 declare type Handler = (base: string, item: string, type: ItemType) => boolean | string;
 
@@ -886,6 +1052,10 @@ declare type Info = {
     id: string;
 };
 
+declare type InlineDatasource = {
+    url: NullableEnvValue;
+};
+
 declare type InlineDatasources = {
     [name in InternalDatasource['name']]: {
         url: InternalDatasource['url'];
@@ -901,6 +1071,28 @@ declare interface InternalDatasource {
     url: EnvValue_2;
     config: any;
 }
+
+declare type InternalRequestParams = {
+    /**
+     * The original client method being called.
+     * Even though the rootField / operation can be changed,
+     * this method stays as it is, as it's what the user's
+     * code looks like
+     */
+    clientMethod: string;
+    /**
+     * Name of js model that triggered the request. Might be used
+     * for warnings or error messages
+     */
+    jsModelName?: string;
+    callsite?: CallSite;
+    /** Headers metadata that will be passed to the Engine */
+    headers?: Record<string, string>;
+    transaction?: PrismaPromiseTransaction;
+    unpacker?: Unpacker;
+    lock?: PromiseLike<void>;
+    otelParentCtx?: Context;
+} & Omit<QueryMiddlewareParams, 'runInTransaction'>;
 
 declare type InvalidArgError = InvalidArgNameError | MissingArgError | InvalidArgTypeError | AtLeastOneError | AtMostOneError | InvalidNullArgError;
 
@@ -961,6 +1153,14 @@ declare interface InvalidNullArgError {
     atMostOne: boolean;
 }
 
+declare enum IsolationLevel {
+    ReadUncommitted = "ReadUncommitted",
+    ReadCommitted = "ReadCommitted",
+    RepeatableRead = "RepeatableRead",
+    Snapshot = "Snapshot",
+    Serializable = "Serializable"
+}
+
 declare type ItemType = 'd' | 'f' | 'l';
 
 declare interface Job {
@@ -972,7 +1172,10 @@ declare interface Job {
 /**
  * Create a SQL query for a list of values.
  */
-export declare function join(values: RawValue[], separator?: string): Sql;
+export declare function join(values: RawValue[], separator?: string, prefix?: string, suffix?: string): Sql;
+
+declare class JsonNull extends NullTypesEnumValue {
+}
 
 declare type LoadedEnv = {
     message?: string;
@@ -981,6 +1184,12 @@ declare type LoadedEnv = {
     };
 } | undefined;
 
+declare type LocationInFile = {
+    fileName: string;
+    lineNumber: number | null;
+    columnNumber: number | null;
+};
+
 declare type LogDefinition = {
     level: LogLevel;
     emit: 'stdout' | 'event';
@@ -988,7 +1197,85 @@ declare type LogDefinition = {
 
 declare type LogLevel = 'info' | 'query' | 'warn' | 'error';
 
-export declare function makeDocument({ dmmf, rootTypeName, rootField, select }: DocumentInput): Document;
+export declare function makeDocument({ dmmf, rootTypeName, rootField, select, modelName }: DocumentInput): Document_2;
+
+/**
+ * Generates more strict variant of an enum which, unlike regular enum,
+ * throws on non-existing property access. This can be useful in following situations:
+ * - we have an API, that accepts both `undefined` and `SomeEnumType` as an input
+ * - enum values are generated dynamically from DMMF.
+ *
+ * In that case, if using normal enums and no compile-time typechecking, using non-existing property
+ * will result in `undefined` value being used, which will be accepted. Using strict enum
+ * in this case will help to have a runtime exception, telling you that you are probably doing something wrong.
+ *
+ * Note: if you need to check for existence of a value in the enum you can still use either
+ * `in` operator or `hasOwnProperty` function.
+ *
+ * @param definition
+ * @returns
+ */
+export declare function makeStrictEnum<T extends Record<PropertyKey, string | number>>(definition: T): T;
+
+export declare type Metric<T> = {
+    key: string;
+    value: T;
+    labels: Record<string, string>;
+    description: string;
+};
+
+export declare type MetricHistogram = {
+    buckets: MetricHistogramBucket[];
+    sum: number;
+    count: number;
+};
+
+export declare type MetricHistogramBucket = [maxValue: number, count: number];
+
+export declare type Metrics = {
+    counters: Metric<number>[];
+    gauges: Metric<number>[];
+    histograms: Metric<MetricHistogram>[];
+};
+
+export declare class MetricsClient {
+    private _engine;
+    constructor(engine: Engine);
+    /**
+     * Returns all metrics gathered up to this point in prometheus format.
+     * Result of this call can be exposed directly to prometheus scraping endpoint
+     *
+     * @param options
+     * @returns
+     */
+    prometheus(options?: MetricsOptions): Promise<string>;
+    /**
+     * Returns all metrics gathered up to this point in prometheus format.
+     *
+     * @param options
+     * @returns
+     */
+    json(options?: MetricsOptions): Promise<Metrics>;
+}
+
+declare type MetricsOptions = {
+    /**
+     * Labels to add to every metrics in key-value format
+     */
+    globalLabels?: Record<string, string>;
+};
+
+declare type MetricsOptionsCommon = {
+    globalLabels?: Record<string, string>;
+};
+
+declare type MetricsOptionsJson = {
+    format: 'json';
+} & MetricsOptionsCommon;
+
+declare type MetricsOptionsPrometheus = {
+    format: 'prometheus';
+} & MetricsOptionsCommon;
 
 /**
  * Opposite of InvalidArgNameError - if the user *doesn't* provide an arg that should be provided
@@ -1010,10 +1297,46 @@ declare interface MissingItem {
 
 declare type Namespace = 'all' | 'engine';
 
+export declare class NotFoundError extends Error {
+    constructor(message: string);
+}
+
 declare interface NoTrueSelectError {
     type: 'noTrueSelect';
     field: DMMF.SchemaField;
 }
+
+declare type NullableEnvValue = {
+    fromEnvVar: string | null;
+    value?: string | null;
+};
+
+declare class NullTypesEnumValue extends ObjectEnumValue {
+    _getNamespace(): string;
+}
+
+/**
+ * Base class for unique values of object-valued enums.
+ */
+declare abstract class ObjectEnumValue {
+    constructor(arg?: symbol);
+    abstract _getNamespace(): string;
+    _getName(): string;
+    toString(): string;
+}
+
+export declare const objectEnumValues: {
+    classes: {
+        DbNull: typeof DbNull;
+        JsonNull: typeof JsonNull;
+        AnyNull: typeof AnyNull;
+    };
+    instances: {
+        DbNull: DbNull;
+        JsonNull: JsonNull;
+        AnyNull: AnyNull;
+    };
+};
 
 /**
  * maxWait ?= 2000
@@ -1022,24 +1345,8 @@ declare interface NoTrueSelectError {
 declare type Options = {
     maxWait?: number;
     timeout?: number;
+    isolationLevel?: IsolationLevel;
 };
-
-declare class PrismaClientFetcher {
-    prisma: any;
-    debug: boolean;
-    hooks: any;
-    dataloader: DataLoader<{
-        document: Document;
-        runInTransaction?: boolean;
-        transactionId?: number;
-        headers?: Record<string, string>;
-    }>;
-    constructor(prisma: any, enableDebug?: boolean, hooks?: any);
-    get [Symbol.toStringTag](): string;
-    request({ document, dataPath, rootField, typeName, isList, callsite, rejectOnNotFound, clientMethod, runInTransaction, showColors, engineHook, args, headers, transactionId, unpacker, }: RequestParams): Promise<any>;
-    sanitizeMessage(message: any): any;
-    unpack(document: any, data: any, path: any, rootField: any, unpacker?: Unpacker): any;
-}
 
 export declare class PrismaClientInitializationError extends Error {
     clientVersion: string;
@@ -1050,7 +1357,7 @@ export declare class PrismaClientInitializationError extends Error {
 
 export declare class PrismaClientKnownRequestError extends Error {
     code: string;
-    meta?: object;
+    meta?: Record<string, unknown>;
     clientVersion: string;
     constructor(message: string, code: string, clientVersion: string, meta?: any);
     get [Symbol.toStringTag](): string;
@@ -1062,7 +1369,7 @@ export declare interface PrismaClientOptions {
      */
     rejectOnNotFound?: InstanceRejectOnNotFound;
     /**
-     * Overwrites the datasource url from your prisma.schema file
+     * Overwrites the datasource url from your schema.prisma file
      */
     datasources?: Datasources;
     /**
@@ -1092,7 +1399,6 @@ export declare interface PrismaClientOptions {
     __internal?: {
         debug?: boolean;
         hooks?: Hooks;
-        useUds?: boolean;
         engine?: {
             cwd?: string;
             binaryPath?: string;
@@ -1117,6 +1423,19 @@ export declare class PrismaClientUnknownRequestError extends Error {
 export declare class PrismaClientValidationError extends Error {
     get [Symbol.toStringTag](): string;
 }
+
+declare type PrismaPromiseBatchTransaction = {
+    kind: 'batch';
+    id: number;
+    isolationLevel?: IsolationLevel;
+};
+
+declare type PrismaPromiseInteractiveTransaction = {
+    kind: 'itx';
+    id: string;
+};
+
+declare type PrismaPromiseTransaction = PrismaPromiseBatchTransaction | PrismaPromiseInteractiveTransaction;
 
 declare type QueryEngineRequestHeaders = {
     traceparent?: string;
@@ -1149,26 +1468,50 @@ declare type QueryMiddlewareParams = {
  */
 export declare function raw(value: string): Sql;
 
+/**
+ * Supported value or SQL instance.
+ */
 export declare type RawValue = Value | Sql;
 
 declare type RejectOnNotFound = boolean | ((error: Error) => Error) | undefined;
 
+declare type Request_2 = {
+    document: Document_2;
+    transaction?: PrismaPromiseTransaction;
+    headers?: Record<string, string>;
+    otelParentCtx?: Context;
+    otelChildCtx?: Context;
+    tracingConfig?: TracingConfig;
+};
+
+declare class RequestHandler {
+    client: Client;
+    hooks: any;
+    dataloader: DataLoader<Request_2>;
+    constructor(client: Client, hooks?: any);
+    request({ document, dataPath, rootField, typeName, isList, callsite, rejectOnNotFound, clientMethod, engineHook, args, headers, transaction, unpacker, otelParentCtx, otelChildCtx, }: RequestParams): Promise<any>;
+    handleRequestError({ error, clientMethod, callsite }: HandleErrorParams): never;
+    sanitizeMessage(message: any): any;
+    unpack(document: any, data: any, path: any, rootField: any, unpacker?: Unpacker): any;
+    get [Symbol.toStringTag](): string;
+}
+
 declare type RequestParams = {
-    document: Document;
+    document: Document_2;
     dataPath: string[];
     rootField: string;
     typeName: string;
     isList: boolean;
     clientMethod: string;
-    callsite?: string;
+    callsite?: CallSite;
     rejectOnNotFound?: RejectOnNotFound;
-    runInTransaction?: boolean;
-    showColors?: boolean;
+    transaction?: PrismaPromiseTransaction;
     engineHook?: EngineMiddleware;
     args: any;
     headers?: Record<string, string>;
-    transactionId?: number;
     unpacker?: Unpacker;
+    otelParentCtx?: Context;
+    otelChildCtx?: Context;
 };
 
 /**
@@ -1180,10 +1523,10 @@ export declare class Sql {
     constructor(rawStrings: ReadonlyArray<string>, rawValues: ReadonlyArray<RawValue>);
     get text(): string;
     get sql(): string;
-    [inspect.custom](): {
+    inspect(): {
         text: string;
         sql: string;
-        values: Value[];
+        values: unknown[];
     };
 }
 
@@ -1192,27 +1535,27 @@ export declare class Sql {
  */
 export declare function sqltag(strings: ReadonlyArray<string>, ...values: RawValue[]): Sql;
 
-declare namespace sqlTemplateTag {
-    export {
-        join,
-        raw,
-        sqltag,
-        Value,
-        RawValue,
-        Sql,
-        empty,
-        sqltag as default
-    }
-}
+declare type TracingConfig = {
+    enabled: boolean;
+    middleware: boolean;
+};
 
 declare namespace Transaction {
     export {
+        IsolationLevel,
         Options,
-        Info
+        Info,
+        TransactionHeaders
     }
 }
 
-export declare function transformDocument(document: Document): Document;
+declare type TransactionHeaders = {
+    traceparent?: string;
+};
+
+export declare function transformDocument(document: Document_2): Document_2;
+
+declare const TX_ID: unique symbol;
 
 /**
  * Unpacks the result of a data object and maps DateTime fields to instances of `Date` inplace
@@ -1223,12 +1566,15 @@ export declare function unpack({ document, path, data }: UnpackOptions): any;
 declare type Unpacker = (data: any) => any;
 
 declare interface UnpackOptions {
-    document: Document;
+    document: Document_2;
     path: string[];
     data: any;
 }
 
-export declare type Value = string | number | boolean | object | null | undefined;
+/**
+ * Values supported by SQL engine.
+ */
+export declare type Value = unknown;
 
 export declare function warnEnvConflicts(envPaths: any): void;
 
