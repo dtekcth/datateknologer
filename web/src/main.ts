@@ -2,8 +2,6 @@ import "./std/global";
 import "intl-pluralrules";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { Chart, registerables } from "chart.js";
-import { FluentBundle, FluentResource } from "@fluent/bundle";
 
 import App from "./App.vue";
 import { router } from "./router";
