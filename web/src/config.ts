@@ -48,7 +48,7 @@ export const config = {
       pictureUrl: communicationsProfile,
       name: "Samuel Kyletoft",
       title: "Head of Communications",
-      email: "s1amuel.kyletoft@dtek.se",
+      email: "samuel.kyletoft@dtek.se",
     },
   ],
 };
