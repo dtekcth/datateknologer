@@ -29,4 +29,5 @@ RUN mkdir /app && chown node:node /app
 WORKDIR /app
 USER node
 COPY --chown=node:node --from=compile /app/dist ./dist
+EXPOSE 80
 CMD ["node", "dist/index.js"]

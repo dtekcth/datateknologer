@@ -26,12 +26,8 @@ const shouldUseProductionAPI =
   import.meta.env.MODE === "production" || import.meta.env.MODE === "staging";
 
 export const CONFIG = {
-  PUBLIC_URL: shouldUseProductionAPI
-    ? "https://api.dag.dtek.se"
-    : "http://localhost:10016/public",
-  API_URL: shouldUseProductionAPI
-    ? "https://api.dag.dtek.se/api/v1"
-    : "http://localhost:10016/api/v1",
+  PUBLIC_URL: shouldUseProductionAPI ? "" : "http://localhost:10016/public",
+  API_URL: shouldUseProductionAPI ? "/api/v1" : "http://localhost:10016/api/v1",
 };
 
 const createQueryString = (obj: Query) =>
