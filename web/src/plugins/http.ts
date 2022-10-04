@@ -27,10 +27,10 @@ const shouldUseProductionAPI =
 
 export const CONFIG = {
   PUBLIC_URL: shouldUseProductionAPI
-    ? "api.dag.dtek.se"
+    ? "https://api.dag.dtek.se"
     : "http://localhost:10016/public",
   API_URL: shouldUseProductionAPI
-    ? "api.dag.dtek.se/api/v1"
+    ? "https://api.dag.dtek.se/api/v1"
     : "http://localhost:10016/api/v1",
 };
 
