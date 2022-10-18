@@ -99,7 +99,7 @@ export default defineComponent({
             :style="{ backgroundImage: `url('${CONFIG.PUBLIC_URL}/${ad.imageUrl}')` }"
           )
           h3.font-display.mb-2 {{ ad.title }}
-          .text-lg.mb-4 {{ ad.description }}
+          .text-lg.mb-4.whitespace-pre-line {{ ad.description }}
           a.block.w-full(:href="ad.url"): .btn.w-full Apply
 
   .no-parallax
