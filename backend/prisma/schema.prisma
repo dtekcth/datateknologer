@@ -27,6 +27,7 @@ model Event {
   imageUrl           String?
   foodWillBeServed   Boolean
   archived           Boolean  @default(false)
+  mailTemplate       String?
 
   tickets EventRegistration[]
 }

@@ -32,9 +32,8 @@ const handler: Handler = async (
   { params, files }: Request<Schema>,
   { prisma, config }: Context
 ): Promise<Response> => {
-  const slug =
-    Buffer.from(randomUUID()).toString("base64") +
-    files.image.path.match(".*")?.skip(1).first();
+  const extension = files.image.originalname.split(".").last();
+  const slug = Buffer.from(randomUUID()).toString("base64") + extension;
   const newPath = join(config.paths.data, slug);
   await move(files.image.path, newPath);
   const ev = await prisma.common.event.update({

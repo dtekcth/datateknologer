@@ -21,6 +21,7 @@ const schema = {
     registrationOpens: z.string(),
     registrationCloses: z.string(),
     foodWillBeServed: z.boolean(),
+    mailTemplate: z.string().optional(),
   }),
   // files: {
   //   image: 1,
@@ -49,6 +50,7 @@ const handler: Handler = async (
       registrationOpens: parseISO(body.registrationOpens),
       registrationCloses: parseISO(body.registrationCloses),
       foodWillBeServed: body.foodWillBeServed,
+      mailTemplate: body.mailTemplate,
       // imageUrl: slug,
     },
   });

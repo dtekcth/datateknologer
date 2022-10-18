@@ -70,6 +70,11 @@ export default defineComponent({
           .font-bold.font-display Marketing
           .fa.fa-bullhorn
         .text-justify Searching for a new developer? Hosting an epic hackathon or event? Something else entirely? We can help you spread the word! By utilizing one of our many marketing solutions, your company can reach our students through our social media channels, the division’s weekly newsletter, or with posters in all of our section premises.
+    .flex.justify-center.pb-4
+      .text-xl
+        span Contact us at&nbsp;
+        a.text-brand.font-bold(href="mailto:dag@dtek.se") dag@dtek.se
+        span &nbsp;for more information.
 
   section.h-96.w-full.relative.parallax.intermission
     .absolute.center.bg-contain.bg-no-repeat.logo(
@@ -113,7 +118,7 @@ export default defineComponent({
               h1: AnimatedNumber(:target="102")
             .text-lg New volunteers every year
 
-  section.h-96.w-full.relative.parallax.pub
+  section.h-96.w-full.relative.no-parallax.pub
     .absolute.center.bg-contain.bg-no-repeat.logo(
       class="w-[12rem] h-[6rem] md:w-[24rem] md:h-[12rem]",
       :style="{ backgroundImage: `url('${logoWhite}')` }"
@@ -237,12 +242,12 @@ section {
   transform: translateZ(-1px) scale(1.5);
 }
 
-.parallax.pub::after {
+.pub {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("../assets/pub.png");
   background-size: cover;
-  height: 200%;
+  // height: 100%;
 
-  transform: translateZ(-1px) scale(1.5);
+  // transform: translateZ(-1px) scale(1.5);
 }
 </style>

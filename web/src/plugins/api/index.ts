@@ -9,6 +9,7 @@ export type CompanyEventArgs = {
   registrationCloses: Date;
   maxParticipants: number;
   foodWillBeServed: boolean;
+  mailTemplate?: string;
   archived?: boolean;
 };
 
@@ -21,6 +22,7 @@ export type CompanyEvent = {
   registrationCloses: Date;
   maxParticipants: number;
   foodWillBeServed: boolean;
+  mailTemplate?: string;
   imageUrl?: string;
 };
 
@@ -206,7 +208,11 @@ export const api = {
     async list(): Promise<Array<CompanyEvent>> {
       return (await Http.get("/events")).map(normalizeEvent);
     },
-    async verifyTicket(code: string): Promise<{ success: boolean }> {
+    async verifyTicket(
+      code: string,
+    ): Promise<
+      { success: boolean; event: string; attendee: string } | Response
+    > {
       return Http.post("/events/ticket/verify", { body: { code } });
     },
     async register(registration: Registration): Promise<{ success: boolean }> {

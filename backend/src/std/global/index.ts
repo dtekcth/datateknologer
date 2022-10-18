@@ -5,9 +5,6 @@ import "./set";
 
 declare global {
   function wait(t: number): Promise<void>;
-  interface String {
-    capitalize(): string;
-  }
   interface Math {
     roundToTarget(values: Array<number>, decimals: number): Array<number>;
   }
@@ -19,11 +16,11 @@ global.wait = (t) =>
     setTimeout(resolve, t);
   });
 
-String.prototype.capitalize = function capitalize() {
-  const head = this.slice(0, 1);
-  const tail = this.slice(1);
-  return head.toLocaleUpperCase() + tail;
-};
+// String.prototype.capitalize = function capitalize() {
+//   const head = this.slice(0, 1);
+//   const tail = this.slice(1);
+//   return head.toLocaleUpperCase() + tail;
+// };
 
 Math.roundToTarget = function roundToTarget(numbers, target) {
   let err = target - numbers.map((x) => x.floor()).sum();

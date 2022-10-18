@@ -255,7 +255,6 @@ export class Server {
 
     for (const { handler, schema } of endpoints as any) {
       // validateSchema(schema);
-      console.log(schema);
       const { method } = schema;
       const path = join(this.root, schema.path);
       const expressHandler = this.buildRouteHandler(schema, handler);

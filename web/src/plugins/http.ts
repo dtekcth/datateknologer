@@ -26,7 +26,9 @@ const shouldUseProductionAPI =
   import.meta.env.MODE === "production" || import.meta.env.MODE === "staging";
 
 export const CONFIG = {
-  PUBLIC_URL: shouldUseProductionAPI ? "" : "http://localhost:10016/public",
+  PUBLIC_URL: shouldUseProductionAPI
+    ? "/public"
+    : "http://localhost:10016/public",
   API_URL: shouldUseProductionAPI ? "/api/v1" : "http://localhost:10016/api/v1",
 };
 

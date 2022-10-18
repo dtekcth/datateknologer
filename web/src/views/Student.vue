@@ -62,7 +62,7 @@ export default defineComponent({
               )
                 h2.mb-0.font-display.text-brand {{ event.title }}
                 .text-lg.text-muted.font-display.font-bold {{ format(event.date, "yyyy-MM-dd") }}
-              .text-lg.mb-8 {{ event.description }}
+              .text-lg.mb-8.whitespace-pre-line {{ event.description }}
               .flex.items-center.justify-between(
                 v-if="event.maxParticipants > event.tickets"
               )
@@ -82,7 +82,7 @@ export default defineComponent({
     )
 
   section.bg-base-100.p-8.no-parallax.border-t-brand.border-t-8(class="lg:px-64")
-    .flex.justify-center
+    .flex
       h1.font-display.text-brand.mb-8 Job openings
     .flex.items-center(v-if="jobs.isEmpty()", class="h-[10rem]")
       div

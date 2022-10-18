@@ -39,6 +39,7 @@ export type Event = {
   imageUrl: string | null
   foodWillBeServed: boolean
   archived: boolean
+  mailTemplate: string | null
 }
 
 /**
@@ -291,7 +292,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 4.4.0
-   * Query Engine version: 8746e055198f517658c08a0c426c7eec87f5a85f
+   * Query Engine version: f352a33b70356f46311da8b00d83386dd9f145d6
    */
   export type PrismaVersion = {
     client: string
@@ -1882,6 +1883,7 @@ export namespace Prisma {
     imageUrl: string | null
     foodWillBeServed: boolean | null
     archived: boolean | null
+    mailTemplate: string | null
   }
 
   export type EventMaxAggregateOutputType = {
@@ -1895,6 +1897,7 @@ export namespace Prisma {
     imageUrl: string | null
     foodWillBeServed: boolean | null
     archived: boolean | null
+    mailTemplate: string | null
   }
 
   export type EventCountAggregateOutputType = {
@@ -1908,6 +1911,7 @@ export namespace Prisma {
     imageUrl: number
     foodWillBeServed: number
     archived: number
+    mailTemplate: number
     _all: number
   }
 
@@ -1933,6 +1937,7 @@ export namespace Prisma {
     imageUrl?: true
     foodWillBeServed?: true
     archived?: true
+    mailTemplate?: true
   }
 
   export type EventMaxAggregateInputType = {
@@ -1946,6 +1951,7 @@ export namespace Prisma {
     imageUrl?: true
     foodWillBeServed?: true
     archived?: true
+    mailTemplate?: true
   }
 
   export type EventCountAggregateInputType = {
@@ -1959,6 +1965,7 @@ export namespace Prisma {
     imageUrl?: true
     foodWillBeServed?: true
     archived?: true
+    mailTemplate?: true
     _all?: true
   }
 
@@ -2065,6 +2072,7 @@ export namespace Prisma {
     imageUrl: string | null
     foodWillBeServed: boolean
     archived: boolean
+    mailTemplate: string | null
     _count: EventCountAggregateOutputType | null
     _avg: EventAvgAggregateOutputType | null
     _sum: EventSumAggregateOutputType | null
@@ -2097,6 +2105,7 @@ export namespace Prisma {
     imageUrl?: boolean
     foodWillBeServed?: boolean
     archived?: boolean
+    mailTemplate?: boolean
     tickets?: boolean | EventRegistrationFindManyArgs
     _count?: boolean | EventCountOutputTypeArgs
   }
@@ -4798,7 +4807,8 @@ export namespace Prisma {
     registrationCloses: 'registrationCloses',
     imageUrl: 'imageUrl',
     foodWillBeServed: 'foodWillBeServed',
-    archived: 'archived'
+    archived: 'archived',
+    mailTemplate: 'mailTemplate'
   };
 
   export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
@@ -4921,6 +4931,7 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter | string | null
     foodWillBeServed?: BoolFilter | boolean
     archived?: BoolFilter | boolean
+    mailTemplate?: StringNullableFilter | string | null
     tickets?: EventRegistrationListRelationFilter
   }
 
@@ -4935,6 +4946,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     foodWillBeServed?: SortOrder
     archived?: SortOrder
+    mailTemplate?: SortOrder
     tickets?: EventRegistrationOrderByRelationAggregateInput
   }
 
@@ -4953,6 +4965,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     foodWillBeServed?: SortOrder
     archived?: SortOrder
+    mailTemplate?: SortOrder
     _count?: EventCountOrderByAggregateInput
     _avg?: EventAvgOrderByAggregateInput
     _max?: EventMaxOrderByAggregateInput
@@ -4974,6 +4987,7 @@ export namespace Prisma {
     imageUrl?: StringNullableWithAggregatesFilter | string | null
     foodWillBeServed?: BoolWithAggregatesFilter | boolean
     archived?: BoolWithAggregatesFilter | boolean
+    mailTemplate?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type EventRegistrationWhereInput = {
@@ -5155,6 +5169,7 @@ export namespace Prisma {
     imageUrl?: string | null
     foodWillBeServed: boolean
     archived?: boolean
+    mailTemplate?: string | null
     tickets?: EventRegistrationCreateNestedManyWithoutEventInput
   }
 
@@ -5169,6 +5184,7 @@ export namespace Prisma {
     imageUrl?: string | null
     foodWillBeServed: boolean
     archived?: boolean
+    mailTemplate?: string | null
     tickets?: EventRegistrationUncheckedCreateNestedManyWithoutEventInput
   }
 
@@ -5182,6 +5198,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     tickets?: EventRegistrationUpdateManyWithoutEventNestedInput
   }
 
@@ -5196,6 +5213,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
     tickets?: EventRegistrationUncheckedUpdateManyWithoutEventNestedInput
   }
 
@@ -5210,6 +5228,7 @@ export namespace Prisma {
     imageUrl?: string | null
     foodWillBeServed: boolean
     archived?: boolean
+    mailTemplate?: string | null
   }
 
   export type EventUpdateManyMutationInput = {
@@ -5222,6 +5241,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EventUncheckedUpdateManyInput = {
@@ -5235,6 +5255,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EventRegistrationCreateInput = {
@@ -5524,6 +5545,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     foodWillBeServed?: SortOrder
     archived?: SortOrder
+    mailTemplate?: SortOrder
   }
 
   export type EventAvgOrderByAggregateInput = {
@@ -5542,6 +5564,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     foodWillBeServed?: SortOrder
     archived?: SortOrder
+    mailTemplate?: SortOrder
   }
 
   export type EventMinOrderByAggregateInput = {
@@ -5555,6 +5578,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     foodWillBeServed?: SortOrder
     archived?: SortOrder
+    mailTemplate?: SortOrder
   }
 
   export type EventSumOrderByAggregateInput = {
@@ -5984,6 +6008,7 @@ export namespace Prisma {
     imageUrl?: string | null
     foodWillBeServed: boolean
     archived?: boolean
+    mailTemplate?: string | null
   }
 
   export type EventUncheckedCreateWithoutTicketsInput = {
@@ -5997,6 +6022,7 @@ export namespace Prisma {
     imageUrl?: string | null
     foodWillBeServed: boolean
     archived?: boolean
+    mailTemplate?: string | null
   }
 
   export type EventCreateOrConnectWithoutTicketsInput = {
@@ -6019,6 +6045,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EventUncheckedUpdateWithoutTicketsInput = {
@@ -6032,6 +6059,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     foodWillBeServed?: BoolFieldUpdateOperationsInput | boolean
     archived?: BoolFieldUpdateOperationsInput | boolean
+    mailTemplate?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EventRegistrationCreateManyEventInput = {

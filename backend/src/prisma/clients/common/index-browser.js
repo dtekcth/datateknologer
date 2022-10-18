@@ -14,11 +14,11 @@ exports.Prisma = Prisma
 
 /**
  * Prisma Client JS version: 4.4.0
- * Query Engine version: 8746e055198f517658c08a0c426c7eec87f5a85f
+ * Query Engine version: f352a33b70356f46311da8b00d83386dd9f145d6
  */
 Prisma.prismaVersion = {
   client: "4.4.0",
-  engine: "8746e055198f517658c08a0c426c7eec87f5a85f"
+  engine: "f352a33b70356f46311da8b00d83386dd9f145d6"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -108,7 +108,8 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   registrationCloses: 'registrationCloses',
   imageUrl: 'imageUrl',
   foodWillBeServed: 'foodWillBeServed',
-  archived: 'archived'
+  archived: 'archived',
+  mailTemplate: 'mailTemplate'
 });
 
 exports.Prisma.JobAdScalarFieldEnum = makeEnum({

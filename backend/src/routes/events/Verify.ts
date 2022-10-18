@@ -34,7 +34,7 @@ const handler: Handler = async (
 
   if (!ev) return Ok({ success: false });
 
-  await prisma.common.eventRegistration.update({
+  const ticket = await prisma.common.eventRegistration.update({
     where: {
       verificationCode: body.code,
     },
@@ -42,7 +42,7 @@ const handler: Handler = async (
       attended: true,
     },
   });
-  return Ok({ success: true });
+  return Ok({ success: true, event: ev.name, attendee: ticket.name });
 };
 
 export default new Endpoint(schema, handler);

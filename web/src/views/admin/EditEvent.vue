@@ -24,6 +24,7 @@ export default defineComponent({
       registrationOpens: format(ev.registrationOpens, "yyyy-MM-dd"),
       maxParticipants: String(ev.maxParticipants),
       foodWillBeServed: ev.foodWillBeServed,
+      mailTemplate: ev.mailTemplate,
     };
     const model = ref(innerModel);
 
@@ -55,6 +56,7 @@ export default defineComponent({
       registrationOpens: [validators.required, validators.isDate],
       maxParticipants: [validators.required, validators.isInt],
       foodWillBeServed: [],
+      mailTemplate: [],
     });
 
     const errors: Ref<Record<keyof typeof innerModel, string | undefined>> =
@@ -67,6 +69,7 @@ export default defineComponent({
         registrationOpens: undefined,
         maxParticipants: undefined,
         foodWillBeServed: undefined,
+        mailTemplate: undefined,
       });
 
     const tryCreateEvent = async () => {
@@ -93,6 +96,7 @@ export default defineComponent({
         registrationOpens: parseISO(model.value.registrationOpens),
         registrationCloses: parseISO(model.value.registrationCloses),
         foodWillBeServed: model.value.foodWillBeServed,
+        mailTemplate: model.value.mailTemplate,
       });
 
       if (imageFile.value) {
@@ -187,6 +191,10 @@ export default defineComponent({
           .flex.items-center.justify-between
             .text-lg.font-bold There will be food served
             RetroSwitch(v-model="model.foodWillBeServed")
+      .pt-16
+        .text-lg.font-bold Mail template
+        RetroTextbox(v-model="model.mailTemplate")
+        .text-brand.h-6 {{ errors.mailTemplate }}
       .flex.justify-end.pt-16.gap-8
         .btn(@click="archive") Archive
         .btn(@click="tryCreateEvent") Save

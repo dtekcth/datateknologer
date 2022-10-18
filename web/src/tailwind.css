@@ -1685,6 +1685,10 @@ html {
   margin-bottom: 8rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .block {
   display: block;
 }
@@ -1925,6 +1929,10 @@ html {
   overflow: hidden;
 }
 
+.whitespace-pre-line {
+  white-space: pre-line;
+}
+
 .rounded-xl {
   border-radius: 0.75rem;
 }
@@ -2105,6 +2113,10 @@ html {
   padding-top: 1rem;
 }
 
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -2127,6 +2139,14 @@ html {
 
 .pt-16 {
   padding-top: 4rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
+}
+
+.pt-12 {
+  padding-top: 3rem;
 }
 
 .text-left {
@@ -2436,11 +2456,11 @@ input:focus {
   bottom: 0;
   left: 0;
   background-position: center center;
-  z-index: -1;
+  z-index: -100;
 }
 
 .no-parallax {
-  z-index: 999;
+  z-index: 9999;
 }
 
 .hover\:bg-accent-focus:hover {

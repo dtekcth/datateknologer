@@ -8,14 +8,6 @@ import { CONFIG } from "@plugins/http";
 
 import { format } from "date-fns";
 
-import chairmanProfile from "../../assets/profiles/chairman.webp";
-import financialManagerProfile from "../../assets/profiles/financialManager.webp";
-import eventsProfile from "../../assets/profiles/events.webp";
-import logisticsProfile from "../../assets/profiles/logistics.webp";
-import marketingProfile from "../../assets/profiles/marketing.webp";
-import customerRelationsProfile from "../../assets/profiles/customerRelations.webp";
-import communicationsProfile from "../../assets/profiles/communications.webp";
-
 export default defineComponent({
   name: "Home",
   async setup() {
@@ -30,63 +22,6 @@ export default defineComponent({
       jobs: await api.jobs.open(),
       CONFIG,
       format,
-      // profiles: [
-      //   {
-      //     pictureUrl: chairmanProfile,
-      //     name: "Linn Österlund",
-      //     title: "Head of Operations",
-      //     email: "linn.osterlund@dtek.se",
-      //     row: 0,
-      //   },
-      //   {
-      //     pictureUrl: financialManagerProfile,
-      //     name: "Johannes Hjalmarsson",
-      //     title: "Financial Manager",
-      //     email: "johannes.hjalmarsson@dtek.se",
-      //     row: 0,
-      //   },
-      //   {
-      //     pictureUrl: eventsProfile,
-      //     name: "Samuel Runmark Thunell",
-      //     title: "Head of Events",
-      //     email: "samuel.runmark.thunell@dtek.se",
-      //     row: 0,
-      //   },
-      //   {
-      //     pictureUrl: logisticsProfile,
-      //     name: "Olof Forsberg",
-      //     title: "Head of Logistics",
-      //     email: "olof.forsberg@dtek.se",
-      //     row: 1,
-      //   },
-      //   {
-      //     pictureUrl: marketingProfile,
-      //     name: "Samuel Kontola",
-      //     title: "Head of Marketing",
-      //     email: "samuel.kontola@dtek.se",
-      //     row: 1,
-      //   },
-      //   {
-      //     pictureUrl: customerRelationsProfile,
-      //     name: "Johannes Holmgren",
-      //     title: "Head of Customer Relations",
-      //     email: "johannes.holmgren@dtek.se",
-      //     row: 1,
-      //   },
-      //   {
-      //     pictureUrl: communicationsProfile,
-      //     name: "Samuel Kyletoft",
-      //     title: "Head of Communications",
-      //     email: "s1amuel.kyletoft@dtek.se",
-      //     row: 1,
-      //   },
-      // ]
-      //   .map((m, i) => Object.assign(m, { id: String(i) }))
-      //   .groupBy((p) => p.row),
-      // updateImage: (id: string, ev: Event) => {
-      //   const target = ev.target as HTMLInputElement;
-      //   const file = (target.files as FileList)[0];
-      // },
     };
   },
 });
@@ -116,7 +51,7 @@ export default defineComponent({
               .flex.items-center.justify-between.mb-2
                 h3.font-display.text-brand.mb-0 {{ event.title }}
                 .text-lg.text-muted.font-display.font-bold {{ format(event.date, "yyyy-MM-dd") }}
-              .text-lg.mb-8 {{ event.description }}
+              .text-lg.mb-8.whitespace-pre-line {{ event.description }}
               .flex.items-center.justify-between
                 Link(
                   :to="{ name: 'Admin/EditEvent', params: { id: event.id } }"
@@ -139,7 +74,7 @@ export default defineComponent({
               .flex.items-center.justify-between.mb-2
                 h3.font-display.text-brand.mb-0 {{ ad.title }}
                 //- .text-lg.text-muted.font-display.font-bold {{ format(ad.date, "yyyy-MM-dd") }}
-              .text-lg.mb-8 {{ ad.description }}
+              .text-lg.mb-8.whitespace-pre-line {{ ad.description }}
               .flex.items-center.justify-between
                 Link(:to="{ name: 'Admin/EditJobAd', params: { id: ad.id } }")
                   .btn.w-32 Edit

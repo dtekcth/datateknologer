@@ -92,11 +92,15 @@ const handler: Handler = async (
     auth: config.email,
   });
 
+  const ticketHtml = `You have been registered for our event: <b>${ev.title}</b>. You can find your ticket <a href="https://dag.dtek.se/en/ticket/${registration.verificationCode}">here</a>.`;
+  const html = ev.mailTemplate
+    ? ticketHtml + "<br><br>" + ev.mailTemplate
+    : ticketHtml;
   transporter.sendMail({
     to: body.email,
     from: "DAG",
     subject: `Event ticket: ${ev.title}`,
-    text: `Thanks for registering for our event. You can find your ticket at https://datateknologer.se/en/ticket/${registration.verificationCode}`,
+    html,
   });
 
   return Ok(registration);

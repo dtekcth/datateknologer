@@ -23,6 +23,7 @@ const schema = {
     registrationOpens: z.string().optional(),
     registrationCloses: z.string().optional(),
     foodWillBeServed: z.boolean().optional(),
+    mailTemplate: z.string().optional(),
     archived: z.boolean().optional(),
   }),
 };
@@ -48,6 +49,7 @@ const handler: Handler = async (
       registrationOpens: parseDate(body.registrationOpens),
       registrationCloses: parseDate(body.registrationCloses),
       foodWillBeServed: body.foodWillBeServed,
+      mailTemplate: body.mailTemplate,
       archived: body.archived,
     },
   });
