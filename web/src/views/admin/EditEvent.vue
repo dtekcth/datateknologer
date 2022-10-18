@@ -19,7 +19,7 @@ export default defineComponent({
       title: ev.title,
       description: ev.description,
       date: format(ev.date, "yyyy-MM-dd"),
-      time: format(ev.date, "hh:mm"),
+      time: format(ev.date, "HH:mm"),
       registrationCloses: format(ev.registrationCloses, "yyyy-MM-dd"),
       registrationOpens: format(ev.registrationOpens, "yyyy-MM-dd"),
       maxParticipants: String(ev.maxParticipants),

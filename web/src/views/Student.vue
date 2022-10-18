@@ -61,7 +61,7 @@ export default defineComponent({
                 class="lg:flex-row lg:items-center lg:justify-between"
               )
                 h2.mb-0.font-display.text-brand {{ event.title }}
-                .text-lg.text-muted.font-display.font-bold {{ format(event.date, "yyyy-MM-dd") }}
+                .text-lg.text-muted.font-display.font-bold {{ format(event.date, "yyyy-MM-dd HH:mm") }}
               .text-lg.mb-8.whitespace-pre-line {{ event.description }}
               .flex.items-center.justify-between(
                 v-if="event.maxParticipants > event.tickets"
