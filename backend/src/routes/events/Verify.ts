@@ -30,6 +30,9 @@ const handler: Handler = async (
     where: {
       verificationCode: body.code,
     },
+    include: {
+      event: true,
+    },
   });
 
   if (!ev) return Ok({ success: false });
@@ -42,7 +45,7 @@ const handler: Handler = async (
       attended: true,
     },
   });
-  return Ok({ success: true, event: ev.name, attendee: ticket.name });
+  return Ok({ success: true, event: ev.event.title, attendee: ticket.name });
 };
 
 export default new Endpoint(schema, handler);

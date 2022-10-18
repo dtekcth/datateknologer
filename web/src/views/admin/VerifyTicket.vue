@@ -25,8 +25,9 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.flex.justify-center.mt-32
-  h1.text-brand {{ status }}
+div
+  .flex.justify-center.mt-32
+    h1.text-brand {{ status }}
   div(v-if="event")
     span.font-bold Event:&nbsp;
     span {{ event }}
