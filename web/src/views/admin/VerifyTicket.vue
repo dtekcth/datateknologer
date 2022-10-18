@@ -28,10 +28,10 @@ export default defineComponent({
 div
   .flex.justify-center.mt-32
     h1.text-brand {{ status }}
-  div(v-if="event")
+  .flex.justify-center.text-xl.pt-4(v-if="event")
     span.font-bold Event:&nbsp;
     span {{ event }}
-  div(v-if="attendee")
+  .flex.justify-center.text-xl.pt-4(v-if="attendee")
     span.font-bold Event:&nbsp;
     span {{ attendee }}
 </template>
