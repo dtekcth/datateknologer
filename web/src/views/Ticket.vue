@@ -9,7 +9,7 @@ export default defineComponent({
   async setup() {
     const route = useRoute();
 
-    const url = `https://dag.dtek.se/en/admin/ticket/${
+    const url = `https://datateknologer.se/en/admin/ticket/${
       route.params.code as string
     }`;
     const imgSrc = await QRCode.toDataURL(url);

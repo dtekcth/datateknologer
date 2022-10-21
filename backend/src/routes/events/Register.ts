@@ -92,7 +92,7 @@ const handler: Handler = async (
     auth: config.email,
   });
 
-  const ticketHtml = `You have been registered for our event: <b>${ev.title}</b>. You can find your ticket <a href="https://dag.dtek.se/en/ticket/${registration.verificationCode}">here</a>.`;
+  const ticketHtml = `You have been registered for our event: <b>${ev.title}</b>. You can find your ticket <a href="https://datateknologer.se/en/ticket/${registration.verificationCode}">here</a>.`;
   const html = ev.mailTemplate
     ? ticketHtml + "<br><br>" + ev.mailTemplate
     : ticketHtml;
