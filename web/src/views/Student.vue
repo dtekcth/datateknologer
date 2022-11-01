@@ -75,7 +75,7 @@ export default defineComponent({
                     span.font-bold {{ format(event.registrationCloses, "yyyy-MM-dd") }}
               .font-bold(v-else) There are no tickets left for this event.
 
-  section.h-96.w-full.relative.parallax.pub
+  section.h-96.w-full.relative.no-parallax.pub
     .absolute.center.bg-contain.bg-no-repeat.logo(
       class="w-[12rem] h-[6rem] md:w-[24rem] md:h-[12rem]",
       :style="{ backgroundImage: `url('${logoUrl}')` }"
@@ -146,12 +146,22 @@ section {
   transform: translateZ(-1px) scale(1.5);
 }
 
-.parallax.pub::after {
+// .parallax.pub::after {
+//   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+//     url("../assets/basen.jpg");
+//   background-size: cover;
+//   height: 160%;
+
+//   transform: translateZ(-1px) scale(1.5);
+// }
+
+.pub {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("../assets/basen.jpg");
   background-size: cover;
-  height: 160%;
+  background-position: center;
+  height: 20rem;
 
-  transform: translateZ(-1px) scale(1.5);
+  // transform: translateZ(-1px) scale(1.5);
 }
 </style>
