@@ -21,16 +21,16 @@ export const config = {
       email: "johannes.hjalmarsson@dag.dtek.se",
     },
     {
+      pictureUrl: customerRelationsProfile,
+      name: "Johannes Holmgren",
+      title: "Member",
+      email: "johannes.holmgren@dag.dtek.se",
+    },
+    {
       pictureUrl: eventsProfile,
       name: "Samuel Runmark Thunell",
       title: "Member",
       email: "samuel.runmark.thunell@dag.dtek.se",
-    },
-    {
-      pictureUrl: logisticsProfile,
-      name: "Olof Forsberg",
-      title: "Member",
-      email: "olof.forsberg@dag.dtek.se",
     },
     {
       pictureUrl: marketingProfile,
@@ -38,17 +38,18 @@ export const config = {
       title: "Member",
       email: "samuel.kontola@dag.dtek.se",
     },
-    {
-      pictureUrl: customerRelationsProfile,
-      name: "Johannes Holmgren",
-      title: "Member",
-      email: "johannes.holmgren@dag.dtek.se",
-    },
+
     {
       pictureUrl: communicationsProfile,
       name: "Samuel Kyletoft",
       title: "Member",
       email: "samuel.kyletoft@dag.dtek.se",
+    },
+    {
+      pictureUrl: logisticsProfile,
+      name: "Olof Forsberg",
+      title: "Member",
+      email: "olof.forsberg@dag.dtek.se",
     },
   ],
 };
