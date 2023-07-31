@@ -1,55 +1,54 @@
-import chairmanProfile from "./assets/profiles/chairman.webp";
-import financialManagerProfile from "./assets/profiles/financialManager.webp";
-import eventsProfile from "./assets/profiles/events.webp";
-import logisticsProfile from "./assets/profiles/logistics.webp";
-import marketingProfile from "./assets/profiles/marketing.webp";
-import customerRelationsProfile from "./assets/profiles/customerRelations.webp";
-import communicationsProfile from "./assets/profiles/communications.webp";
+import chairmanProfile from "./assets/profiles/chairman.jpg.jpg;
+import financialManagerProfile from "./assets/profiles/financialManager.jpg.jpg;
+import eventsProfile from "./assets/profiles/events.jpg.jpg;
+import logisticsProfile from "./assets/profiles/logistics.jpg.jpg;
+import marketingProfile from "./assets/profiles/marketing.jpg.jpg;
+import customerRelationsProfile from "./assets/profiles/customerRelations.jpg.jpg;
+import communicationsProfile from "./assets/profiles/communications.jpg.jpg;
 
 export const config = {
   profiles: [
     {
       pictureUrl: chairmanProfile,
-      name: "Linn Österlund",
-      title: "Chairwoman",
-      email: "linn.osterlund@dag.dtek.se",
+      name: "Viktor Käll",
+      title: "Chairman",
+      email: "viktor.kall@.dtek.se",
     },
     {
       pictureUrl: financialManagerProfile,
-      name: "Johannes Hjalmarsson",
+      name: "Alfred Karlsson",
       title: "Treasurer",
-      email: "johannes.hjalmarsson@dag.dtek.se",
-    },
-    {
-      pictureUrl: customerRelationsProfile,
-      name: "Johannes Holmgren",
-      title: "Member",
-      email: "johannes.holmgren@dag.dtek.se",
-    },
-    {
-      pictureUrl: eventsProfile,
-      name: "Samuel Runmark Thunell",
-      title: "Member",
-      email: "samuel.runmark.thunell@dag.dtek.se",
+      email: "alfred.karlsson@dag.dtek.se",
     },
     {
       pictureUrl: marketingProfile,
-      name: "Samuel Kontola",
+      name: "Gustav Bruhn",
       title: "Member",
-      email: "samuel.kontola@dag.dtek.se",
+      email: "gustav.bruhn@dag.dtek.se",
     },
-
+    {
+      pictureUrl: eventsProfile,
+      name: "Salam Hani",
+      title: "Member",
+      email: "salam.hani@dag.dtek.se",
+    },
+    {
+      pictureUrl: customerRelationsProfile,
+      name: "Tim Karlsson",
+      title: "Member",
+      email: "tim.karlsson@dag.dtek.se",
+    },
     {
       pictureUrl: communicationsProfile,
-      name: "Samuel Kyletoft",
+      name: "Filip Wallin",
       title: "Member",
-      email: "samuel.kyletoft@dag.dtek.se",
+      email: "filip.wallin@dag.dtek.se",
     },
     {
       pictureUrl: logisticsProfile,
-      name: "Olof Forsberg",
+      name: "Tobias Olsson",
       title: "Member",
-      email: "olof.forsberg@dag.dtek.se",
+      email: "tobias.olsson@dag.dtek.se",
     },
   ],
 };
