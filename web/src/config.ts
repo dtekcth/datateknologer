@@ -1,10 +1,10 @@
-import chairmanProfile from "./assets/profiles/chairman.jpg.jpg;
-import financialManagerProfile from "./assets/profiles/financialManager.jpg.jpg;
-import eventsProfile from "./assets/profiles/events.jpg.jpg;
-import logisticsProfile from "./assets/profiles/logistics.jpg.jpg;
-import marketingProfile from "./assets/profiles/marketing.jpg.jpg;
-import customerRelationsProfile from "./assets/profiles/customerRelations.jpg.jpg;
-import communicationsProfile from "./assets/profiles/communications.jpg.jpg;
+import chairmanProfile from "./assets/profiles/chairman.jpg"
+import financialManagerProfile from "./assets/profiles/financialManager.jpg"
+import eventsProfile from "./assets/profiles/events.jpg"
+import logisticsProfile from "./assets/profiles/logistics.jpg"
+import marketingProfile from "./assets/profiles/marketing.jpg"
+import customerRelationsProfile from "./assets/profiles/customerRelations.jpg"
+import communicationsProfile from "./assets/profiles/communications.jpg"
 
 export const config = {
   profiles: [
