@@ -139,7 +139,7 @@ export default defineComponent({
           .text-2xl.text-brand.font-bold.font-display {{ name }}
           .text-lg.font-bold {{ title }}
           .text-lg {{ email }}
-    .grid.grid-cols-1.gap-4(class="lg:grid-cols-4 lg:gap-32")
+    .grid.grid-cols-1.gap-4(class="lg:grid-cols-3 lg:gap-32")
       .flex.flex-col.items-center(
         v-for="{email, name, pictureUrl, title} in profiles.skip(3)"
       )
