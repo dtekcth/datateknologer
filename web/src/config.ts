@@ -1,7 +1,6 @@
 import chairmanProfile from "./assets/profiles/chairman.jpg"
 import financialManagerProfile from "./assets/profiles/financialManager.jpg"
 import eventsProfile from "./assets/profiles/events.png"
-import logisticsProfile from "./assets/profiles/logistics.jpg"
 import marketingProfile from "./assets/profiles/marketing.jpg"
 import customerRelationsProfile from "./assets/profiles/customerRelations.jpg"
 import communicationsProfile from "./assets/profiles/communications.jpg"
