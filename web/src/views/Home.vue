@@ -3,7 +3,7 @@ import { useLocalization } from "@plugins/localization";
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import Header from "../components/Header.vue";
-import frontUrl from "../assets/theone.png";
+import frontUrl from "../assets/theone.jpg";
 import logoOrange from "../assets/orange.svg";
 import logoWhite from "../assets/white.svg";
 import { config } from "../config";
@@ -169,7 +169,7 @@ export default defineComponent({
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("../assets/theone.png");
+    background-image: url("../assets/theone.jpg");
     background-size: cover;
     mix-blend-mode: hard-light;
     filter: blur(calc(2px * var(--deg-intensity)));
