@@ -34,7 +34,7 @@ export const config = {
     },
     {
       pictureUrl: customerRelationsProfile,
-      name: "Oksar Sköld",
+      name: "Oskar Sköld",
       title: "Member",
       email: "oskar.skold@dtek.se",
     },
