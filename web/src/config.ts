@@ -1,7 +1,7 @@
 import chairmanProfile from "./assets/profiles/chairman.jpg"
 import financialManagerProfile from "./assets/profiles/financialManager.jpg"
 import eventsProfile from "./assets/profiles/events.png"
-// import logisticsProfile from "./assets/profiles/logistics.jpg"
+import logisticsProfile from "./assets/profiles/logistics.jpg"
 import marketingProfile from "./assets/profiles/marketing.jpg"
 import customerRelationsProfile from "./assets/profiles/customerRelations.jpg"
 import communicationsProfile from "./assets/profiles/communications.jpg"
@@ -10,45 +10,45 @@ export const config = {
   profiles: [
     {
       pictureUrl: chairmanProfile,
-      name: "August Ådahl",
+      name: "Martin Martinsson",
       title: "Chairman",
-      email: "august.adahl@dtek.se",
+      email: "martin.martinsson@dtek.se",
     },
     {
       pictureUrl: financialManagerProfile,
-      name: "Mia Heljeberg",
+      name: "Leo Wivhagen",
       title: "Treasurer",
-      email: "mia.heljeberg@dtek.se",
+      email: "leo.wivhagen@dtek.se",
     },
     {
       pictureUrl: marketingProfile,
-      name: "Oscar Morisbak Olsson",
+      name: "Axel Marklén",
       title: "Member",
-      email: "oscar.morisbakolsson@dtek.se",
+      email: "axel.marklen@dtek.se",
     },
     {
       pictureUrl: eventsProfile,
-      name: "Arvid Boisen",
+      name: "Melvin Berg",
       title: "Member",
-      email: "arvid.boisen@dtek.se",
+      email: "melvin.berg@dtek.se",
     },
     {
       pictureUrl: customerRelationsProfile,
-      name: "Oskar Sköld",
+      name: "Lukas Söderberg",
       title: "Member",
-      email: "oskar.skold@dtek.se",
+      email: "lukas.soderberg@dtek.se",
     },
     {
       pictureUrl: communicationsProfile,
-      name: "Rasmus Helgesson",
+      name: "Daniel Husberg",
       title: "Member",
-      email: "rasmus.helgesson@dtek.se",
+      email: "daniel.husberg@dtek.se",
     },
-    // {
-    //   pictureUrl: logisticsProfile,
-    //   name: "Namn Namnsson",
-    //   title: "Member",
-    //   email: "namn.namnson@dtek.se",
-    // },
+    {
+      pictureUrl: logisticsProfile,
+      name: "Jesper Wärn",
+      title: "Member",
+      email: "jesper.warn@dtek.se",
+    },
   ],
 };
