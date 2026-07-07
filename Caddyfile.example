@@ -1,0 +1,6 @@
+# HTTPS for datateknologer.se — Caddy obtains and renews the
+# Let's Encrypt certificate automatically; DNS for the domain must
+# already point at this server before the first start.
+datateknologer.se, www.datateknologer.se {
+	reverse_proxy web:80
+}

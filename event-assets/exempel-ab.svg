@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160">
+  <!-- Placeholder company logo for events.
+       CHANGE THE COMPANY NAME in the <text> element below, save
+       (optionally with a new filename), and upload it on the event's
+       edit form in /en/admin. Fonts fall back to system sans-serif,
+       so it renders the same everywhere. -->
+  <circle cx="80" cy="80" r="46" fill="#dd5416" />
+  <path d="M80 34a46 46 0 0 0 0 92z" fill="#0a0a0a" />
+  <text x="160" y="80" dominant-baseline="central"
+        font-family="Helvetica, Arial, sans-serif" font-weight="700"
+        font-size="58" letter-spacing="2" fill="#0a0a0a">Exempel AB</text>
+</svg>
