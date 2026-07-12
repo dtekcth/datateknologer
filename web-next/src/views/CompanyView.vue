@@ -7,12 +7,12 @@ import AboutDag from "@/components/AboutDag.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import RevealTitle from "@/components/RevealTitle.vue";
 import logoUrl from "@/assets/logo-full-dark.svg";
-import towerUrl from "@/assets/tower2_dither.svg";
-import beeUrl from "@/assets/bee_dither.svg";
-import nestUrl from "@/assets/nest2_dither.svg";
-import honeycombUrl from "@/assets/honeycomb_dither.svg";
-import flowersUrl from "@/assets/flowers-dither.svg";
-import handsUrl from "@/assets/hands-touch-dither.svg";
+import towerUrl from "@/assets/tower2_dither.webp";
+import beeUrl from "@/assets/bee_dither.webp";
+import nestUrl from "@/assets/nest2_dither.webp";
+import honeycombUrl from "@/assets/honeycomb_dither.webp";
+import flowersUrl from "@/assets/flowers-dither.webp";
+import handsUrl from "@/assets/hands-touch-dither.webp";
 
 const { lang, otherLang } = useLocale();
 

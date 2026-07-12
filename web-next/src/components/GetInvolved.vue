@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useLocale } from "@/composables/useLocale";
 import RevealTitle from "@/components/RevealTitle.vue";
 import { CONTACT } from "@/content/site";
-import handsUrl from "@/assets/hands-touch-dither.svg";
+import handsUrl from "@/assets/hands-touch-dither.webp";
 
 /* "Get involved" — a simple form for students who want to join DAG.
    there's no membership endpoint on the backend, so the form composes

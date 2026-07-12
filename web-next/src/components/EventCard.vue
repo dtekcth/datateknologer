@@ -2,10 +2,10 @@
 import { computed } from "vue";
 import { publicImage, type ApiEvent } from "@/api/events";
 import { useLocale } from "@/composables/useLocale";
-import bbqUrl from "@/assets/bbq-dither.svg";
-import auditoriumUrl from "@/assets/auditorium-dither.svg";
-import rpiUrl from "@/assets/rpi-dither.svg";
-import writingUrl from "@/assets/writing-dither.svg";
+import bbqUrl from "@/assets/bbq-dither.webp";
+import auditoriumUrl from "@/assets/auditorium-dither.webp";
+import rpiUrl from "@/assets/rpi-dither.webp";
+import writingUrl from "@/assets/writing-dither.webp";
 
 const props = defineProps<{ event: ApiEvent; past?: boolean }>();
 

@@ -12,10 +12,10 @@ import EventModal from "@/components/EventModal.vue";
 import PastEventsModal from "@/components/PastEventsModal.vue";
 import RevealTitle from "@/components/RevealTitle.vue";
 import logoUrl from "@/assets/logo-full-dark.svg";
-import handsUrl from "@/assets/jsp-dither.svg";
-import flowersUrl from "@/assets/flowers-dither.svg";
-import treeUrl from "@/assets/tree-dither.svg";
-import tree2Url from "@/assets/tree2_dither.svg";
+import handsUrl from "@/assets/jsp-dither.webp";
+import flowersUrl from "@/assets/flowers-dither.webp";
+import treeUrl from "@/assets/tree-dither.webp";
+import tree2Url from "@/assets/tree2_dither.webp";
 
 const { lang, otherLang } = useLocale();
 

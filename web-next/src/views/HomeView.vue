@@ -4,8 +4,8 @@ import { useLocale } from "@/composables/useLocale";
 import { introPhase } from "@/composables/useIntro";
 import { mode, phase } from "@/composables/usePageTransition";
 import logoUrl from "@/assets/logo-full-dark.svg";
-import cloudUrl from "@/assets/cloud-dither.svg";
-import birdsUrl from "@/assets/birds-dither.svg";
+import cloudUrl from "@/assets/cloud-dither.webp";
+import birdsUrl from "@/assets/birds-dither.webp";
 
 const { lang, otherLang } = useLocale();
 
