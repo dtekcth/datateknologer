@@ -3,7 +3,7 @@ import { useLocalization } from "@plugins/localization";
 import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import Header from "../components/Header.vue";
-import frontUrl from "../assets/theone.jpg";
+import frontUrl from "../assets/dag_group_photo.jpg";
 import logoOrange from "../assets/orange.svg";
 import logoWhite from "../assets/white.svg";
 import { config } from "../config";

@@ -1,7 +1,7 @@
-import chairmanProfile from "./assets/profiles/chairman.jpeg"
-import financialManagerProfile from "./assets/profiles/tresurer.jpeg"
-import viceChairmanProfile from "./assets/profiles/vicechairman.jpeg"
-import prProfile from "./assets/profiles/prmanager.jpeg"
+import chairmanProfile from "./assets/profiles/chairman.jpg"
+import financialManagerProfile from "./assets/profiles/treasurer.jpg"
+import viceChairmanProfile from "./assets/profiles/vicechairman.jpg"
+import prProfile from "./assets/profiles/prmanager.jpg"
 
 export const config = {
   profiles: [
