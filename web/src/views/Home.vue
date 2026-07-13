@@ -169,7 +169,7 @@ export default defineComponent({
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("../assets/theone.jpg");
+    background-image: url("../assets/dag_group_photo.jpg");
     background-size: cover;
     mix-blend-mode: hard-light;
     filter: blur(calc(2px * var(--deg-intensity)));
@@ -219,13 +219,13 @@ section {
 }
 
 .parallax.landing::after {
-  background: url("../assets/theone.jpg");
+  background: url("../assets/dag_group_photo.jpg");
   background-size: cover;
   transform: translateZ(-1px) scale(1.5);
 }
 
 .landing:not(.parallax) {
-  background: url("../assets/theone.jpg");
+  background: url("../assets/dag_group_photo.jpg");
   background-size: cover;
   background-position: center top;
 }
