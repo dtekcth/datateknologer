@@ -1,7 +1,28 @@
 # Datateknologer
-The website for DAG, the company relations committé at Datateknologsektionen, Chalmers
 
-## How to edit
-To change DAG members on the front page you have to edit `web/src/config.ts`. You can replace the profile pictures in `web/src/assets/profiles` or add new ones and import them just like the current profile pictures.
+The website for DAG, the company relations committee at
+Datateknologsektionen, Chalmers — live at
+[datateknologer.se](https://datateknologer.se).
 
-Texts on the front page can be edited in `web/src/views/Home.vue`, the other pages can also be edited in the same folder. The footer and header can be found in `web/src/components`.
+| Folder      | What it is                                              |
+| ----------- | ------------------------------------------------------- |
+| `web-next/` | **The site** (Vue 3 + Vite). See `web-next/README.md`.  |
+| `backend/`  | Events/registration API (Express + Prisma + Postgres).  |
+| `web/`      | The previous site — superseded by `web-next`.           |
+
+## How to edit the site
+
+Everything is documented in **`web-next/README.md`**:
+
+- Board members → `web-next/src/content/board.ts`
+- Contact emails & links → `web-next/src/content/site.ts`
+- Page texts (always Swedish **and** English) → the `copy` object in
+  each view under `web-next/src/views/`
+- Events are managed through the backend's admin API — see the
+  *Events* section of `web-next/README.md`
+
+## Deploying
+
+See **`DEPLOYMENT.md`** — server setup for datateknologer.se, HTTPS,
+and how the admin password is set, used and rotated. Day-to-day
+deploys: push to git, run `./sync.sh` on the server.
