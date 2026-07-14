@@ -1,0 +1,40 @@
+# Front door for the DAG site: serves the Vue SPA, proxies the API to
+# the backend, and (in production) terminates HTTPS.
+#
+# SITE_ADDRESS defaults to :80 so a plain `docker run` just serves HTTP
+# on any host. In production set it to the domain(s) — e.g.
+#   SITE_ADDRESS="datateknologer.se, www.datateknologer.se"
+# and Caddy obtains and renews Let's Encrypt certificates on its own
+# (DNS must already point here). BACKEND_UPSTREAM points at the backend
+# container; override it for other setups.
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+
+	# same-origin API + uploaded images → the backend container
+	# (compose service "app"). handle blocks are mutually exclusive and
+	# matched in order, so these win over the SPA catch-all below and the
+	# proxied paths are never rewritten to index.html.
+	handle /api/v1* {
+		reverse_proxy {$BACKEND_UPSTREAM:app:10016}
+	}
+	handle /public* {
+		reverse_proxy {$BACKEND_UPSTREAM:app:10016}
+	}
+
+	# everything else is the Vue SPA (vue-router history mode): every
+	# unknown path falls back to index.html so /en, /sv, /en/student …
+	# resolve client-side.
+	handle {
+		root * /srv
+
+		# hashed build assets are content-addressed → cache forever; every
+		# other response (index.html and its SPA fallbacks) must always
+		# revalidate so deploys take effect immediately.
+		@notassets not path /assets/*
+		header @notassets Cache-Control "no-store, no-cache"
+		header /assets/* Cache-Control "public, max-age=31536000, immutable"
+
+		try_files {path} /index.html
+		file_server
+	}
+}

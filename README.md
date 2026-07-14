@@ -8,7 +8,6 @@ Datateknologsektionen, Chalmers — live at
 | ----------- | ------------------------------------------------------- |
 | `web-next/` | **The site** (Vue 3 + Vite). See `web-next/README.md`.  |
 | `backend/`  | Events/registration API (Express + Prisma + Postgres).  |
-| `web/`      | The previous site — superseded by `web-next`.           |
 
 ## How to edit the site
 

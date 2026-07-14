@@ -208,8 +208,10 @@ Lives in `../backend` (Express + Prisma, Dockerized).
   (on Apple Silicon the image must be built for `linux/amd64`).
 - Configuration: `backend/config.dev.json` — holds `admin_password`
   and the mail account used for ticket emails.
-- First run needs the database created and the generated Prisma client
-  copied into `dist` (see the backend's own scripts/README).
+- First run needs the Prisma client generated and the database schema
+  pushed: `docker compose run --rm app npx prisma generate` then
+  `... npx prisma db push`. (In production this is automatic — the
+  backend image runs `db push` on startup; see below.)
 
 The frontend picks its API base automatically: in dev it targets
 `http://localhost:10016`, in production it uses same-origin `/api/v1`
@@ -218,41 +220,42 @@ backend, or a reverse proxy that forwards `/api/v1` and `/public`).
 
 ## Deployment
 
-This folder is a **drop-in replacement for the old `web` service**. It
-ships its own `Dockerfile` (node build → nginx on :80) and `nginx/`
-config, in the same shape the old site used, so the server's existing
-`sync.sh` + docker-compose flow keeps working — point the web service's
-build context at `./web-next` instead of `./web`:
+This folder ships its own `Dockerfile` (node build → **Caddy**) and a
+`Caddyfile`, so the `web` container is the whole front door: it serves
+the SPA, proxies the API, **and** terminates HTTPS. The server's
+`sync.sh` + docker-compose flow builds and runs it (see
+`docker-compose.example.yml` at the repo root).
 
-```yaml
-  web:
-    build: ./web-next    # was ./web
-```
-
-The bundled nginx config handles what the SPA needs:
+The bundled Caddyfile handles what the SPA needs:
 
 - **history-mode fallback** — every unknown path serves `index.html`
   (the old `/sv → index_sv.html` rule is obsolete; the new router
   handles languages itself)
-- **gzip including `image/svg+xml`** — the dither illustrations
-  compress ~10:1; without this the student page ships ~4&nbsp;MB of art
+- **gzip + zstd compression** — the dither illustrations compress
+  ~10:1; without this the student page ships ~4&nbsp;MB of art
 - **immutable caching** for hashed `/assets/`, no-cache for the entry
   `index.html` so deploys take effect immediately
 
-This nginx also **proxies `/api/v1` and `/public` to the backend
-container itself** (compose service name `app`), so no extra routing
-layer is needed for the API — whatever sits in front only has to
-terminate HTTPS and forward everything to this container.
+Caddy also **proxies `/api/v1` and `/public` to the backend container
+itself** (compose service name `app`), and **obtains/renews Let's
+Encrypt certificates automatically** when `SITE_ADDRESS` is set to the
+domain. Locally (no `SITE_ADDRESS`) it just serves plain HTTP on `:80`,
+so `docker run -p 8080:80 <image>` works with no extra setup. If the
+server already has its own TLS-terminating proxy, drop `SITE_ADDRESS`
+and point that proxy at this container's port 80.
+
+The backend image **creates/syncs the database schema on startup**
+(`prisma db push`, since there are no committed migrations), so a fresh
+server needs no manual database step.
 
 ### Server setup
 
 The complete step-by-step guide — DNS, secrets, HTTPS, admin password
 setup and rotation, troubleshooting — lives in
 **[`../DEPLOYMENT.md`](../DEPLOYMENT.md)** (repo root). The short
-version: copy the two `*.example` templates at the repo root, create
-`backend/config.json` (template inlined in the guide — deliberately
-not in the repo), fill in the passwords, `docker compose up -d
---build`.
+version: copy `docker-compose.example.yml` → `docker-compose.yml` and
+`backend/config.example.json` → `backend/config.json`, fill in the
+passwords and domain, then `docker compose up -d --build`.
 
 ### Before launch — checklist
 

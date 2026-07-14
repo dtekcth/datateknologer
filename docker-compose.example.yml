@@ -4,17 +4,16 @@
 # server; this is the reference template. To use:
 #
 #   cp docker-compose.example.yml docker-compose.yml
-#   cp Caddyfile.example Caddyfile
 #   cp backend/config.example.json backend/config.json   # fill it in!
 #   docker compose up -d --build
 #
 # Then `sync.sh` keeps deploying it (git pull → build → up).
 #
-# Routing: caddy terminates HTTPS for datateknologer.se and forwards
-# everything to `web` (the site's nginx), which serves the SPA and
+# Routing: `web` runs Caddy and is the whole front door — it terminates
+# HTTPS for datateknologer.se (auto Let's Encrypt), serves the SPA, and
 # proxies /api/v1 + /public on to `app` (the backend). If the server
-# already has its own reverse proxy handling TLS, delete the caddy
-# service and publish web's port 80 wherever that proxy expects it.
+# already has its own reverse proxy handling TLS, drop SITE_ADDRESS and
+# the 443 mapping and point that proxy at web's port 80.
 
 services:
   postgres:
@@ -23,7 +22,7 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: CHANGE_ME_DB_PASSWORD # must match DATABASE_URL below
-      POSTGRES_DB: root
+      POSTGRES_DB: dag # must match the database name in DATABASE_URL below
     volumes:
       - postgres:/var/lib/postgresql/data
 
@@ -43,21 +42,18 @@ services:
   web:
     build: ./web-next
     restart: unless-stopped
-    depends_on:
-      - app
-
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      # the domain(s) Caddy serves + gets certificates for; DNS must
+      # already point here before the first start
+      SITE_ADDRESS: "datateknologer.se, www.datateknologer.se"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
+      - caddy_data:/data # persists the issued TLS certificates
       - caddy_config:/config
     depends_on:
-      - web
+      - app
 
 volumes:
   postgres: {}
