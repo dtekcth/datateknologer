@@ -1,12 +1,22 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
-/* dithered overlapping waves rendered on a canvas — a calm placeholder
-   shown when there are no upcoming events. ported from a standalone demo;
-   the play/speed/blend controls were dropped in favour of a fixed loop. */
+/* dithered overlapping waves rendered on a canvas — a calm placeholder /
+   backdrop. the loop only runs while the canvas is actually on screen and
+   the tab is visible, and draws at ~30fps, so it doesn't keep a CPU core
+   busy when scrolled away or in a background tab. */
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 let raf = 0;
+let ctx: CanvasRenderingContext2D | null = null;
+let io: IntersectionObserver | null = null;
+let onScreen = false;
+let running = false;
+let last = 0;
+let t = 0;
+
+const DRAW_FPS = 30;
+const MIN_DT = 1 / DRAW_FPS;
 
 const W = 1180;
 const H = 480;
@@ -70,9 +80,36 @@ const frame = (ctx: CanvasRenderingContext2D, t: number) => {
   ctx.globalAlpha = 1;
 };
 
+const loop = (now: number) => {
+  raf = requestAnimationFrame(loop);
+  const dt = (now - last) / 1000;
+  if (dt < MIN_DT) return; // throttle the expensive redraw to ~30fps
+  last = now;
+  t += dt;
+  if (ctx) frame(ctx, t);
+};
+
+const start = () => {
+  if (running || !ctx) return;
+  running = true;
+  last = performance.now(); // reset so t doesn't jump after a pause
+  raf = requestAnimationFrame(loop);
+};
+
+const stop = () => {
+  running = false;
+  cancelAnimationFrame(raf);
+};
+
+/* only burn frames when the canvas is visible AND the tab is in front */
+const sync = () => {
+  if (onScreen && !document.hidden) start();
+  else stop();
+};
+
 onMounted(() => {
-  const ctx = canvas.value?.getContext("2d");
-  if (!ctx) return;
+  ctx = canvas.value?.getContext("2d") ?? null;
+  if (!ctx || !canvas.value) return;
 
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduce) {
@@ -80,19 +117,19 @@ onMounted(() => {
     return;
   }
 
-  let last = performance.now();
-  let t = 0;
-  const loop = (now: number) => {
-    const dt = (now - last) / 1000;
-    last = now;
-    t += dt;
-    frame(ctx, t);
-    raf = requestAnimationFrame(loop);
-  };
-  raf = requestAnimationFrame(loop);
+  io = new IntersectionObserver((entries) => {
+    onScreen = entries[0]?.isIntersecting ?? false;
+    sync();
+  });
+  io.observe(canvas.value);
+  document.addEventListener("visibilitychange", sync);
 });
 
-onBeforeUnmount(() => cancelAnimationFrame(raf));
+onBeforeUnmount(() => {
+  stop();
+  io?.disconnect();
+  document.removeEventListener("visibilitychange", sync);
+});
 </script>
 
 <template>

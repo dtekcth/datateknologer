@@ -273,9 +273,6 @@ const copy = computed(() =>
     <main class="stage">
       <div class="hands" aria-hidden="true">
         <img :src="handsUrl" alt="" />
-        <img class="hands-ripple ripple-1" :src="handsUrl" alt="" />
-        <img class="hands-ripple ripple-2" :src="handsUrl" alt="" />
-        <img class="hands-ripple ripple-3" :src="handsUrl" alt="" />
       </div>
 
       <div class="content">
@@ -315,7 +312,14 @@ const copy = computed(() =>
     <div ref="treeEl" class="events-tree" :class="{ shown: treeShown }">
       <img :src="treeUrl" alt="" aria-hidden="true" />
     </div>
-    <div ref="tree2El" class="events-tree2" :class="{ shown: tree2Shown }">
+    <!-- the second tree only belongs beside the past-events archive, so
+         with no past events just the one (right) tree is shown -->
+    <div
+      v-show="past.length"
+      ref="tree2El"
+      class="events-tree2"
+      :class="{ shown: tree2Shown }"
+    >
       <img :src="tree2Url" alt="" aria-hidden="true" />
     </div>
     <RevealTitle class="events-title" :text="copy.upcomingTitle" />
@@ -628,63 +632,6 @@ const copy = computed(() =>
   width: 100%;
   height: auto;
   opacity: 0.28;
-}
-
-/* the same dither nudged sideways so its lines land between the base
-   layer's lines — each copy shows through a travelling wavefront,
-   doubling the line density as the ripple passes. Each front is two
-   offset, elongated soft blobs (a lumpy band, not a circle), and each
-   cycle is mostly quiet: the wave only travels for about a third of
-   it, so ripples show up now and then instead of constantly. */
-.hands-ripple {
-  position: absolute;
-  inset: 0;
-  mask-repeat: no-repeat;
-}
-
-.ripple-1 {
-  transform: translateX(2px);
-  mask-image:
-    radial-gradient(closest-side, #000 0% 42%, transparent 100%),
-    radial-gradient(closest-side, #000 0% 38%, transparent 100%);
-  mask-size:
-    46% 22%,
-    26% 32%;
-  mask-position:
-    52% 55%,
-    60% 44%;
-  animation: ripple-sweep-1 21s linear infinite;
-}
-
-/* shifted the other way: where it crosses another ripple the density triples */
-.ripple-2 {
-  transform: translateX(-2px);
-  mask-image:
-    radial-gradient(closest-side, #000 0% 42%, transparent 100%),
-    radial-gradient(closest-side, #000 0% 38%, transparent 100%);
-  mask-size:
-    40% 18%,
-    22% 26%;
-  mask-position:
-    44% 50%,
-    36% 60%;
-  animation: ripple-sweep-2 29s linear infinite;
-  animation-delay: -4200ms;
-}
-
-.ripple-3 {
-  transform: translateX(2px);
-  mask-image:
-    radial-gradient(closest-side, #000 0% 42%, transparent 100%),
-    radial-gradient(closest-side, #000 0% 38%, transparent 100%);
-  mask-size:
-    30% 14%,
-    16% 20%;
-  mask-position:
-    70% 78%,
-    76% 70%;
-  animation: ripple-sweep-3 17s linear infinite;
-  animation-delay: -8000ms;
 }
 
 /* ============ Content ============ */
@@ -1074,92 +1021,6 @@ const copy = computed(() =>
   }
 }
 
-/* each wave starts and ends off-screen at zero opacity (seamless loop)
-   and holds there for most of the cycle; travel windows, speeds and
-   heights are all uneven so nothing lines up or mirrors */
-@keyframes ripple-sweep-1 {
-  0% {
-    mask-position:
-      -40% 74%,
-      -33% 63%;
-    opacity: 0;
-  }
-  4% {
-    opacity: 0.3;
-  }
-  19% {
-    mask-position:
-      52% 55%,
-      60% 44%;
-    opacity: 0.33;
-  }
-  34% {
-    opacity: 0.22;
-  }
-  38%,
-  100% {
-    mask-position:
-      138% 66%,
-      146% 57%;
-    opacity: 0;
-  }
-}
-
-@keyframes ripple-sweep-2 {
-  0%,
-  40% {
-    mask-position:
-      132% 26%,
-      124% 36%;
-    opacity: 0;
-  }
-  45% {
-    opacity: 0.26;
-  }
-  56% {
-    mask-position:
-      44% 50%,
-      36% 60%;
-    opacity: 0.31;
-  }
-  66% {
-    opacity: 0.2;
-  }
-  72%,
-  100% {
-    mask-position:
-      -34% 20%,
-      -42% 30%;
-    opacity: 0;
-  }
-}
-
-@keyframes ripple-sweep-3 {
-  0%,
-  58% {
-    mask-position:
-      -28% 90%,
-      -22% 80%;
-    opacity: 0;
-  }
-  63% {
-    opacity: 0.28;
-  }
-  76% {
-    mask-position:
-      70% 78%,
-      76% 70%;
-    opacity: 0.22;
-  }
-  90%,
-  100% {
-    mask-position:
-      128% 86%,
-      134% 78%;
-    opacity: 0;
-  }
-}
-
 @keyframes menu-fade {
   from {
     opacity: 0;
@@ -1204,7 +1065,6 @@ const copy = computed(() =>
   .lead,
   .ctas,
   .hands,
-  .hands-ripple,
   .menu-overlay,
   .menu-link,
   .menu-flower {
