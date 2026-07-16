@@ -310,7 +310,7 @@ const copy = computed(() =>
     :class="{ 'no-upcoming': !eventsPending && !eventsFailed && upcoming.length === 0 }"
   >
     <div ref="treeEl" class="events-tree" :class="{ shown: treeShown }">
-      <img :src="treeUrl" alt="" aria-hidden="true" />
+      <img :src="treeUrl" alt="" aria-hidden="true" loading="lazy" decoding="async" />
     </div>
     <!-- the second tree only belongs beside the past-events archive, so
          with no past events just the one (right) tree is shown -->
@@ -320,7 +320,7 @@ const copy = computed(() =>
       class="events-tree2"
       :class="{ shown: tree2Shown }"
     >
-      <img :src="tree2Url" alt="" aria-hidden="true" />
+      <img :src="tree2Url" alt="" aria-hidden="true" loading="lazy" decoding="async" />
     </div>
     <RevealTitle class="events-title" :text="copy.upcomingTitle" />
 

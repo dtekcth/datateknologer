@@ -572,7 +572,7 @@ const copy = computed(() =>
       :class="{ shown: decorShown }"
       aria-hidden="true"
     >
-      <span class="nest"><img class="nest-img" :src="nestUrl" alt="" /></span>
+      <span class="nest"><img class="nest-img" :src="nestUrl" alt="" loading="lazy" decoding="async" /></span>
       <span class="prog-bee pb-1"><img class="pb-img" :src="beeUrl" alt="" /></span>
       <span class="prog-bee pb-2"><img class="pb-img" :src="beeUrl" alt="" /></span>
       <span class="prog-bee pb-3"><img class="pb-img" :src="beeUrl" alt="" /></span>
@@ -617,7 +617,7 @@ const copy = computed(() =>
 
     <div class="svc-stage">
       <div class="svc-comb" :class="{ shown: svcShown }" aria-hidden="true">
-        <img :src="honeycombUrl" alt="" />
+        <img :src="honeycombUrl" alt="" loading="lazy" decoding="async" />
       </div>
 
       <div ref="svcGridEl" class="svc-grid" :class="{ shown: svcShown }">
@@ -673,8 +673,8 @@ const copy = computed(() =>
       <!-- the same image split down the middle: each half slides in from
            its own side and the two meet to form the touching hands -->
       <div class="contact-hands" aria-hidden="true">
-        <span class="hand hand-l"><img :src="handsUrl" alt="" /></span>
-        <span class="hand hand-r"><img :src="handsUrl" alt="" /></span>
+        <span class="hand hand-l"><img :src="handsUrl" alt="" loading="lazy" decoding="async" /></span>
+        <span class="hand hand-r"><img :src="handsUrl" alt="" loading="lazy" decoding="async" /></span>
       </div>
 
       <form class="contact-form" @submit.prevent="submitContact">
