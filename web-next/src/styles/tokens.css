@@ -1,0 +1,20 @@
+:root {
+  /* colors */
+  --paper: #f3ecdc;
+  --ink: #0a0a0a;
+  --ink-soft: #2b2925;
+  --muted: #756a5c;
+  --orange: #dd5416;
+  --orange-bright: #fa680a;
+  --orange-deep: #b8430f;
+
+  /* typography */
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-pixel: "Departure Mono", ui-monospace, monospace;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* entrance: fast start, very long slow settle */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}

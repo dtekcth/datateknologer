@@ -48,7 +48,7 @@ const _default = {
     uploads: "/uploads",
   },
   host: "localhost",
-  port: 8855,
+  port: 80,
   admin_password: undefined,
 };
 
