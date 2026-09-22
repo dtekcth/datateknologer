@@ -25,6 +25,6 @@ COPY --chown=node:node --from=compile /app/prisma ./prisma
 COPY --chown=node:node --from=compile /app/node_modules/prisma ./node_modules/prisma
 COPY --chown=node:node --from=compile /app/node_modules/@prisma ./node_modules/@prisma
 COPY --chown=node:node docker-entrypoint.sh ./docker-entrypoint.sh
-# the backend listens on config.port (10016 in the production config)
-EXPOSE 10016
+# the backend listens on config.port (80 in the production config)
+EXPOSE 80
 ENTRYPOINT ["sh", "./docker-entrypoint.sh"]

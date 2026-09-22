@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - 10016:80 # Why this port? I have NO idea!
+    volumes:
+      - ./backend/config.json:/app/config.json:ro # Define this yourself when testing. One is created for prod via the Nomad job definition.
+      - uploads:/uploads
+      - data:/data
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}?connect_timeout=300&pool_timeout=300
+    depends_on:
+      - postgres
+
+  web:
+    build: ./web-next
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data: {}
+  uploads: {}
+  data: {}
