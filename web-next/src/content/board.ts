@@ -30,7 +30,7 @@ export const BOARD: BoardMember[] = [
     photo: chairmanUrl,
     role: { en: "Chairman", sv: "Ordförande" },
     name: "Benjamin Amiri",
-    email: "benjamin.amiri@detek.se",
+    email: "benjamin.amiri@dtek.se",
   },
   {
     photo: vicechairmanUrl,
