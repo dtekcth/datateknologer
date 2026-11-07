@@ -8,7 +8,7 @@ import SiteFooter from "@/components/SiteFooter.vue";
 import RevealTitle from "@/components/RevealTitle.vue";
 import logoUrl from "@/assets/logo-full-dark.svg";
 import towerUrl from "@/assets/tower2_dither.webp";
-import beeUrl from "@/assets/bee_dither.webp";
+import beeUrl from "@/assets/bee_dither.png";
 import nestUrl from "@/assets/nest2_dither.webp";
 import honeycombUrl from "@/assets/honeycomb_dither.webp";
 import flowersUrl from "@/assets/flowers-dither.webp";
@@ -107,7 +107,11 @@ onMounted(() => {
   if (decorEl.value) {
     decorObserver = new IntersectionObserver(
       (entries) => {
-        decorShown.value = entries[entries.length - 1].isIntersecting;
+        if (entries[entries.length - 1].isIntersecting) {
+          decorShown.value = true;
+          decorObserver?.disconnect();
+          decorObserver = null;
+        }
       },
       { rootMargin: "0px 0px -12% 0px", threshold: 0.1 },
     );
@@ -116,7 +120,11 @@ onMounted(() => {
   if (svcGridEl.value) {
     svcObserver = new IntersectionObserver(
       (entries) => {
-        svcShown.value = entries[entries.length - 1].isIntersecting;
+        if (entries[entries.length - 1].isIntersecting) {
+          svcShown.value = true;
+          svcObserver?.disconnect();
+          svcObserver = null;
+        }
       },
       { rootMargin: "0px 0px -10% 0px", threshold: 0.15 },
     );
@@ -125,7 +133,11 @@ onMounted(() => {
   if (contactStageEl.value) {
     contactObserver = new IntersectionObserver(
       (entries) => {
-        contactShown.value = entries[entries.length - 1].isIntersecting;
+        if (entries[entries.length - 1].isIntersecting) {
+          contactShown.value = true;
+          contactObserver?.disconnect();
+          contactObserver = null;
+        }
       },
       { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
     );
@@ -164,11 +176,22 @@ const cancelRun = (counts: Ref<number[]>) => {
 
 const runBlock = (counts: Ref<number[]>, getValues: () => number[]) => {
   cancelRun(counts);
+  const targets = getValues();
   const start = performance.now();
   const tick = (now: number) => {
     const k = Math.min(1, (now - start) / COUNT_MS);
     const ease = 1 - (1 - k) ** 3; /* cubic out — fast start, soft landing */
-    counts.value = getValues().map((v) => Math.round(v * ease));
+    const cur = counts.value;
+    let changed = false;
+    for (let i = 0; i < targets.length; i++) {
+      if (Math.round(targets[i] * ease) !== cur[i]) {
+        changed = true;
+        break;
+      }
+    }
+    if (changed) {
+      counts.value = targets.map((v) => Math.round(v * ease));
+    }
     if (k < 1) {
       blockRafs.set(counts, requestAnimationFrame(tick));
     } else {
@@ -187,14 +210,10 @@ const armBlock = (
   if (!el) return;
   const io = new IntersectionObserver(
     (entries) => {
-      const isIn = entries[entries.length - 1].isIntersecting;
-      if (isIn === shown.value) return;
-      shown.value = isIn;
-      if (isIn) {
+      if (entries[entries.length - 1].isIntersecting) {
+        shown.value = true;
         runBlock(counts, getValues);
-      } else {
-        cancelRun(counts);
-        counts.value = getValues().map(() => 0);
+        io.disconnect();
       }
     },
     { rootMargin: "0px 0px -12% 0px", threshold: 0.2 },
@@ -573,17 +592,17 @@ const copy = computed(() =>
       aria-hidden="true"
     >
       <span class="nest"><img class="nest-img" :src="nestUrl" alt="" loading="lazy" decoding="async" /></span>
-      <span class="prog-bee pb-1"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-2"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-3"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-4"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-5"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-6"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-7"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-8"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-9"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-10"><img class="pb-img" :src="beeUrl" alt="" /></span>
-      <span class="prog-bee pb-11"><img class="pb-img" :src="beeUrl" alt="" /></span>
+      <img class="prog-bee pb-1" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-2" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-3" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-4" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-5" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-6" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-7" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-8" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-9" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-10" :src="beeUrl" alt="" loading="lazy" decoding="async" />
+      <img class="prog-bee pb-11" :src="beeUrl" alt="" loading="lazy" decoding="async" />
     </div>
 
     <RevealTitle class="program-title" :text="copy.programTitle" />
@@ -807,90 +826,61 @@ const copy = computed(() =>
   position: absolute;
   /* unmirrored so the branch end sits at the left screen edge, hive bulb
      toward the page; vertically centred (~55%) between the two blocks —
-     the "program" / "our division" gap. the wrapper fades the TOP of the
-     art into the paper; the img inside fades the inner end. two elements
-     because two mask directions can't reliably combine on one. */
+     the "program" / "our division" gap. */
   display: block;
   left: calc(50% - 50vw + 8px);
-  top: 55%;
+  top: 10%;
+  bottom: 0;
+  margin: auto 0;
+  height: fit-content;
   width: min(52vw, 680px);
-  -webkit-mask-image: linear-gradient(to top, #000 70%, transparent 100%);
-  mask-image: linear-gradient(to top, #000 70%, transparent 100%);
   opacity: 0;
   /* waits fully off the left edge, slides in on reveal, then sits still */
-  transform: translateY(-50%) translateX(-108%);
+  transform: translateX(-108%);
   transition:
     opacity 700ms var(--ease-out),
     transform 1200ms var(--ease-out-expo);
 }
 
+.nest::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, transparent 70%, var(--paper) 100%),
+    linear-gradient(
+      to right,
+      var(--paper) 0%,
+      transparent 15%,
+      transparent 58%,
+      var(--paper) 100%
+    );
+  pointer-events: none;
+}
+
 .prog-decor.shown .nest {
   opacity: 0.55;
-  transform: translateY(-50%) translateX(0);
+  transform: none;
 }
 
 .nest-img {
   display: block;
   width: 100%;
   height: auto;
-  /* both ends dissolve into the paper: the branch tip at the screen edge
-     (left) and the inner end toward the text (right) */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 15%,
-    #000 58%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 15%,
-    #000 58%,
-    transparent 100%
-  );
 }
 
-/* each bee: wrapper does the rise-in (delay = its Fibonacci step, --d);
-   the inner img holds the static facing (rotation / mirror) */
+/* each bee fades in at its Fibonacci step (--d) without promoting 11
+   extra animated transform wrappers */
 .prog-bee {
   position: absolute;
+  height: auto;
   opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 520ms var(--ease-out) var(--d, 0ms),
-    transform 640ms var(--ease-out-expo) var(--d, 0ms);
+  transform: var(--pose, none);
+  transition: opacity 520ms var(--ease-out) var(--d, 0ms);
 }
 
 .prog-decor.shown .prog-bee {
   opacity: 0.8;
-  transform: translateY(0);
-}
-
-/* each bee's facing lives in --pose so the hover-bob keyframes can
-   compose with it (animation transforms would otherwise override it) */
-.pb-img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transform: var(--pose, none);
-}
-
-/* once revealed, the swarm hovers in place — duration and phase are
-   derived from each bee's --d so no two bees bob in step */
-.prog-decor.shown .pb-img {
-  animation: bee-hover calc(2800ms + var(--d, 0ms)) ease-in-out
-    calc(var(--d, 0ms) * -3) infinite;
-}
-
-@keyframes bee-hover {
-  0%,
-  100% {
-    transform: var(--pose, none) translateY(0);
-  }
-  50% {
-    transform: var(--pose, none) translateY(-7px);
-  }
 }
 
 /* Fibonacci reveal — delays follow 1,1,2,3,5,8,13,21 (× 60ms) so the
@@ -1027,7 +1017,7 @@ const copy = computed(() =>
 
 .prog-block.shown .prog-subtitle {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .prog-lead {
@@ -1049,7 +1039,7 @@ const copy = computed(() =>
 
 .prog-block.shown .prog-lead {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* big-number stats — display figures in orange, mono caption below */
@@ -1104,16 +1094,18 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   object-fit: cover;
-  -webkit-mask-image: radial-gradient(
+}
+
+.svc-comb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
     ellipse 66% 70% at center,
-    #000 12%,
-    transparent 76%
+    transparent 12%,
+    var(--paper) 76%
   );
-  mask-image: radial-gradient(
-    ellipse 66% 70% at center,
-    #000 12%,
-    transparent 76%
-  );
+  pointer-events: none;
 }
 
 .svc-grid {
@@ -1185,7 +1177,7 @@ const copy = computed(() =>
 
 .svc-grid.shown .svc-card {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .svc-card:hover {
@@ -1461,7 +1453,7 @@ const copy = computed(() =>
 
 .contact-stage.shown .hand {
   opacity: 1;
-  transform: translateX(0);
+  transform: none;
 }
 
 .contact-form {
@@ -1479,7 +1471,7 @@ const copy = computed(() =>
 
 .contact-stage.shown .contact-form {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .field {
@@ -1613,6 +1605,7 @@ const copy = computed(() =>
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
   color: var(--orange);
 }
 
@@ -1634,7 +1627,7 @@ const copy = computed(() =>
 
 .prog-block.shown .stat-label {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .hero {
@@ -1657,7 +1650,7 @@ const copy = computed(() =>
   padding: 26px 48px;
   position: relative;
   z-index: 3;
-  animation: fade-in 700ms var(--ease-out-expo) both;
+  animation: fade-in 700ms var(--ease-out-expo) backwards;
 }
 
 .nav-left {
@@ -1815,7 +1808,7 @@ const copy = computed(() =>
   padding: 20px 48px 0;
   position: relative;
   z-index: 2;
-  animation: fade-in 700ms var(--ease-out-expo) 150ms both;
+  animation: fade-in 700ms var(--ease-out-expo) 150ms backwards;
 }
 
 .location {
@@ -1857,7 +1850,7 @@ const copy = computed(() =>
   position: absolute;
   inset: 0;
   pointer-events: none;
-  animation: hands-in 1800ms var(--ease-out-expo) 300ms both;
+  animation: hands-in 1800ms var(--ease-out-expo) 300ms backwards;
 }
 
 .tower-wrap {
@@ -1875,9 +1868,14 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   opacity: 0.6;
-  /* fade the tower into the paper toward the bottom edge */
-  -webkit-mask-image: linear-gradient(to bottom, #000 56%, transparent 97%);
-  mask-image: linear-gradient(to bottom, #000 56%, transparent 97%);
+}
+
+.tower-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 56%, var(--paper) 97%);
+  pointer-events: none;
 }
 
 /* bees scattered across the hero — everywhere except over the tower
@@ -1972,7 +1970,7 @@ const copy = computed(() =>
   text-transform: uppercase;
   color: var(--ink);
   margin-bottom: 14px;
-  animation: rise-in 900ms var(--ease-out-expo) 250ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 250ms backwards;
 }
 
 .headline {
@@ -1985,7 +1983,7 @@ const copy = computed(() =>
   max-width: 14ch;
   text-wrap: balance;
   color: var(--orange);
-  animation: rise-in 1100ms var(--ease-out-expo) 350ms both;
+  animation: rise-in 1100ms var(--ease-out-expo) 350ms backwards;
 }
 
 .lead {
@@ -1996,7 +1994,7 @@ const copy = computed(() =>
   color: var(--ink);
   max-width: 52ch;
   text-wrap: balance;
-  animation: rise-in 900ms var(--ease-out-expo) 500ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 500ms backwards;
 }
 
 /* the container is animated (not .cta) so the entrance transform
@@ -2008,7 +2006,7 @@ const copy = computed(() =>
   gap: 16px;
   margin-top: 10px;
   flex-wrap: wrap;
-  animation: rise-in 900ms var(--ease-out-expo) 650ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 650ms backwards;
 }
 
 .cta {

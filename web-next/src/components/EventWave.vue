@@ -18,8 +18,11 @@ let t = 0;
 const DRAW_FPS = 30;
 const MIN_DT = 1 / DRAW_FPS;
 
+const SCALE = 0.5;
 const W = 1180;
 const H = 480;
+const CANVAS_W = W * SCALE;
+const CANVAS_H = H * SCALE;
 const MID = H / 2;
 
 type Layer = {
@@ -52,27 +55,68 @@ const amp = (u: number, tt: number, L: Layer) => {
   return envelope(u) * a * L.amp;
 };
 
+const ALPHA_BUCKETS = 8;
+/* pre-allocated bucket buffers (x, y1, y2, w, h per dash) so drawLayer
+   does zero heap allocations per frame */
+const MAX_DASHES = 4096;
+const bucketData = Array.from(
+  { length: ALPHA_BUCKETS },
+  () => new Float32Array(MAX_DASHES * 5),
+);
+const bucketCounts = new Int32Array(ALPHA_BUCKETS);
+
 const drawLayer = (ctx: CanvasRenderingContext2D, L: Layer, t: number) => {
   const N = Math.floor(W / L.pitch);
+  bucketCounts.fill(0);
+
   for (let i = 0; i < N; i++) {
     const u = i / (N - 1);
     const x = i * L.pitch + L.pitch / 2;
     const A = amp(u, t, L) * (MID * 0.94);
     for (let y = 0; y <= A; y += L.dash + L.gap) {
       const f = 1 - y / (MID * 0.94);
-      const op = Math.max(0.1, Math.min(1, 0.22 + f * 0.92)) * L.a;
+      const norm = Math.max(0.1, Math.min(1, 0.22 + f * 0.92));
+      const b = Math.min(
+        ALPHA_BUCKETS - 1,
+        Math.max(0, Math.floor(((norm - 0.1) / 0.9) * ALPHA_BUCKETS)),
+      );
       const w = 1.4 + f * 1.5;
       const h = Math.min(L.dash, A - y);
       if (h <= 0) break;
-      ctx.globalAlpha = op;
-      ctx.fillStyle = L.c;
-      ctx.fillRect(x - w / 2, MID - y - h, w, h);
-      ctx.fillRect(x - w / 2, MID + y, w, h);
+      const idx = bucketCounts[b] * 5;
+      if (idx + 5 <= bucketData[b].length) {
+        const arr = bucketData[b];
+        arr[idx] = x - w / 2;
+        arr[idx + 1] = MID - y - h;
+        arr[idx + 2] = MID + y;
+        arr[idx + 3] = w;
+        arr[idx + 4] = h;
+        bucketCounts[b]++;
+      }
     }
+  }
+
+  ctx.fillStyle = L.c;
+  for (let b = 0; b < ALPHA_BUCKETS; b++) {
+    const count = bucketCounts[b];
+    if (count === 0) continue;
+    const norm = 0.1 + ((b + 0.5) / ALPHA_BUCKETS) * 0.9;
+    ctx.globalAlpha = norm * L.a;
+    ctx.beginPath();
+    const arr = bucketData[b];
+    for (let j = 0; j < count * 5; j += 5) {
+      const rx = arr[j];
+      const w = arr[j + 3];
+      const h = arr[j + 4];
+      ctx.rect(rx, arr[j + 1], w, h);
+      ctx.rect(rx, arr[j + 2], w, h);
+    }
+    ctx.fill();
   }
 };
 
 const frame = (ctx: CanvasRenderingContext2D, t: number) => {
+  ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
   ctx.clearRect(0, 0, W, H);
   ctx.globalCompositeOperation = "multiply";
   for (const L of LAYERS) drawLayer(ctx, L, t);
@@ -136,8 +180,8 @@ onBeforeUnmount(() => {
   <canvas
     ref="canvas"
     class="wave"
-    :width="W"
-    :height="H"
+    :width="CANVAS_W"
+    :height="CANVAS_H"
     aria-hidden="true"
   />
 </template>

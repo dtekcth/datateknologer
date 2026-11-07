@@ -52,7 +52,10 @@ const revealOnScroll = (el: HTMLElement | null, flag: Ref<boolean>) => {
   if (!el) return;
   const io = new IntersectionObserver(
     (entries) => {
-      flag.value = entries[entries.length - 1].isIntersecting;
+      if (entries[entries.length - 1].isIntersecting) {
+        flag.value = true;
+        io.disconnect();
+      }
     },
     { rootMargin: "0px 0px -12% 0px", threshold: 0.06 },
   );
@@ -429,7 +432,7 @@ const copy = computed(() =>
   padding: 26px 48px;
   position: relative;
   z-index: 3;
-  animation: fade-in 700ms var(--ease-out-expo) both;
+  animation: fade-in 700ms var(--ease-out-expo) backwards;
 }
 
 .nav-left {
@@ -580,7 +583,7 @@ const copy = computed(() =>
   padding: 20px 48px 0;
   position: relative;
   z-index: 2;
-  animation: fade-in 700ms var(--ease-out-expo) 150ms both;
+  animation: fade-in 700ms var(--ease-out-expo) 150ms backwards;
 }
 
 .location {
@@ -622,10 +625,17 @@ const copy = computed(() =>
   bottom: 0;
   width: 100%;
   pointer-events: none;
-  /* dissolve the building into the paper toward the bottom edge */
-  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 97%);
-  mask-image: linear-gradient(to bottom, #000 60%, transparent 97%);
-  animation: hands-in 1800ms var(--ease-out-expo) 300ms both;
+  animation: hands-in 1800ms var(--ease-out-expo) 300ms backwards;
+}
+
+/* dissolve the building into the paper toward the bottom edge without
+   allocating an offscreen GPU mask buffer */
+.hands::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, var(--paper) 97%);
+  pointer-events: none;
 }
 
 .hands img {
@@ -654,7 +664,7 @@ const copy = computed(() =>
   text-transform: uppercase;
   color: var(--ink);
   margin-bottom: 14px;
-  animation: rise-in 900ms var(--ease-out-expo) 250ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 250ms backwards;
 }
 
 .headline {
@@ -667,7 +677,7 @@ const copy = computed(() =>
   max-width: 14ch;
   text-wrap: balance;
   color: var(--orange);
-  animation: rise-in 1100ms var(--ease-out-expo) 350ms both;
+  animation: rise-in 1100ms var(--ease-out-expo) 350ms backwards;
 }
 
 .lead {
@@ -678,7 +688,7 @@ const copy = computed(() =>
   color: var(--ink);
   max-width: 52ch;
   text-wrap: balance;
-  animation: rise-in 900ms var(--ease-out-expo) 500ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 500ms backwards;
 }
 
 /* the container is animated (not .cta) so the entrance transform
@@ -690,7 +700,7 @@ const copy = computed(() =>
   gap: 16px;
   margin-top: 10px;
   flex-wrap: wrap;
-  animation: rise-in 900ms var(--ease-out-expo) 650ms both;
+  animation: rise-in 900ms var(--ease-out-expo) 650ms backwards;
 }
 
 .cta {
@@ -761,7 +771,7 @@ const copy = computed(() =>
 
 .events-tree.shown {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
 }
 
 .events-tree img {
@@ -770,8 +780,15 @@ const copy = computed(() =>
   height: 100%;
   opacity: 0.85;
   transform: scaleX(-1); /* mirror, in place — wrapper handles the grow */
-  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
-  mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+}
+
+.events-tree::after,
+.events-tree2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 62%, var(--paper) 96%);
+  pointer-events: none;
 }
 
 /* second (landscape) dithered tree anchored to the bottom-left, beside
@@ -800,7 +817,7 @@ const copy = computed(() =>
 
 .events-tree2.shown {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
 }
 
 .events-tree2 img {
@@ -808,9 +825,6 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   opacity: 0.85;
-  /* dissolve into the paper toward the bottom edge, like the main tree */
-  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
-  mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
 }
 
 .events-title {
@@ -896,7 +910,7 @@ const copy = computed(() =>
    everyone else emerges from underneath — nearest ring first */
 .event-grid.dealt .deal {
   opacity: 1;
-  transform: translateX(0);
+  transform: none;
   transition:
     transform 620ms var(--ease-out-expo) var(--spread-delay, 0ms),
     opacity 0s linear var(--spread-delay, 0ms);
@@ -904,7 +918,7 @@ const copy = computed(() =>
 
 .event-grid.dealt .deal.hit .deal-inner {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
   transition:
     transform 420ms var(--ease-out-expo) var(--stamp-delay, 0ms),
     opacity 260ms ease-out var(--stamp-delay, 0ms);

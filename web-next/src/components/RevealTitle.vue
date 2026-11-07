@@ -25,7 +25,11 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      shown.value = entries[entries.length - 1].isIntersecting;
+      if (entries[entries.length - 1].isIntersecting) {
+        shown.value = true;
+        observer?.disconnect();
+        observer = null;
+      }
     },
     { threshold: 0.5 },
   );
@@ -65,18 +69,13 @@ onBeforeUnmount(() => observer?.disconnect());
   margin: -0.1em -0.06em;
 }
 
-/* hidden state doubles as the reverse: words sink back behind the
-   clip right-to-left, a touch quicker than they rose */
 .word {
   display: inline-block;
   transform: translateY(118%);
-  transition: transform 520ms var(--ease-out)
-    calc((var(--n) - 1 - var(--i)) * 70ms);
-  will-change: transform;
 }
 
 .reveal.shown .word {
-  transform: translateY(0);
+  transform: none;
   transition: transform 760ms var(--ease-out-expo) calc(var(--i) * 95ms);
 }
 

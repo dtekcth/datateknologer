@@ -58,64 +58,74 @@ const copy = computed(() =>
     </header>
 
     <div class="meta">
-      <div class="location">
-        <span class="location-label">{{ copy.locationLabel }}</span>
-        <p>{{ copy.locationLine1 }}<br />{{ copy.locationLine2 }}</p>
+      <div class="field-box">
+        <div class="location">
+          <span class="location-label">{{ copy.locationLabel }}</span>
+          <p>{{ copy.locationLine1 }}<br />{{ copy.locationLine2 }}</p>
+        </div>
       </div>
     </div>
 
     <main class="stage">
-      <img class="cloud cloud-left" :src="cloudUrl" alt="" />
-      <img class="cloud cloud-right" :src="cloudUrl" alt="" />
-      <img class="birds" :src="birdsUrl" alt="" />
+      <img class="cloud cloud-left" :src="cloudUrl" alt="" decoding="async" />
+      <img class="cloud cloud-right" :src="cloudUrl" alt="" decoding="async" />
+      <img class="birds" :src="birdsUrl" alt="" decoding="async" />
 
       <div class="content">
-        <span class="eyebrow">{{ copy.eyebrow }}</span>
-        <h1 class="headline">{{ copy.headline }}</h1>
-        <p class="lead">{{ copy.lead }}</p>
+        <div class="field-box field-box-eyebrow">
+          <span class="eyebrow">{{ copy.eyebrow }}</span>
+        </div>
+        <div class="field-box">
+          <h1 class="headline">{{ copy.headline }}</h1>
+        </div>
+        <div class="field-box">
+          <p class="lead">{{ copy.lead }}</p>
+        </div>
 
-        <div class="ctas">
-          <RouterLink
-            class="cta cta-student"
-            :to="{ name: 'student', params: { lang } }"
-          >
-            {{ copy.ctaStudent }}
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+        <div class="field-box field-box-ctas">
+          <div class="ctas">
+            <RouterLink
+              class="cta cta-student"
+              :to="{ name: 'student', params: { lang } }"
             >
-              <path d="M5 12h14" />
-              <path d="M13 5l7 7-7 7" />
-            </svg>
-          </RouterLink>
+              {{ copy.ctaStudent }}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="M13 5l7 7-7 7" />
+              </svg>
+            </RouterLink>
 
-          <RouterLink
-            class="cta cta-company"
-            :to="{ name: 'company', params: { lang } }"
-          >
-            {{ copy.ctaCompany }}
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+            <RouterLink
+              class="cta cta-company"
+              :to="{ name: 'company', params: { lang } }"
             >
-              <path d="M5 12h14" />
-              <path d="M13 5l7 7-7 7" />
-            </svg>
-          </RouterLink>
+              {{ copy.ctaCompany }}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="M13 5l7 7-7 7" />
+              </svg>
+            </RouterLink>
+          </div>
         </div>
       </div>
     </main>
@@ -143,7 +153,7 @@ const copy = computed(() =>
   padding: 26px 48px;
   position: relative;
   z-index: 3;
-  animation: fade-in 700ms var(--ease-out-expo) both;
+  animation: fade-in 700ms var(--ease-out-expo) backwards;
 }
 
 .logo {
@@ -180,13 +190,30 @@ const copy = computed(() =>
   padding: 20px 48px 0;
   position: relative;
   z-index: 2;
-  animation: fade-in 700ms var(--ease-out-expo) 150ms both;
+}
+
+/* clip window around each text block so it rises from / sinks down into
+   its own box without spilling outside */
+.field-box {
+  overflow: clip;
+  padding: 0.08em 0.04em;
+  margin: -0.08em -0.04em;
+}
+
+.field-box-eyebrow {
+  margin-bottom: 14px;
+}
+
+.field-box-ctas {
+  margin-top: 10px;
+  padding: 4px 6px;
 }
 
 .location {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  animation: rise-in 900ms var(--ease-out-expo) 350ms backwards;
 }
 
 .location-label {
@@ -228,7 +255,7 @@ const copy = computed(() =>
   width: min(48vw, 620px);
   max-height: 48vh;
   opacity: 0.32;
-  animation: cloud-in-left 1800ms var(--ease-out-expo) 200ms both;
+  animation: cloud-in-left 1800ms var(--ease-out-expo) 200ms backwards;
 }
 
 .cloud-right {
@@ -237,7 +264,7 @@ const copy = computed(() =>
   width: min(50vw, 650px);
   max-height: 50vh;
   opacity: 0.44;
-  animation: cloud-in-right 1800ms var(--ease-out-expo) 300ms both;
+  animation: cloud-in-right 1800ms var(--ease-out-expo) 300ms backwards;
 }
 
 .birds {
@@ -248,7 +275,7 @@ const copy = computed(() =>
   height: auto;
   pointer-events: none;
   opacity: 0.9;
-  animation: birds-in 1300ms var(--ease-out-expo) 800ms both;
+  animation: birds-in 1300ms var(--ease-out-expo) 800ms backwards;
 }
 
 /* ============ Content ============ */
@@ -264,14 +291,14 @@ const copy = computed(() =>
 }
 
 .eyebrow {
+  display: inline-block;
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink);
-  margin-bottom: 14px;
-  animation: rise-in 900ms var(--ease-out-expo) 250ms both;
+  animation: rise-in 1000ms var(--ease-out-expo) 350ms backwards;
 }
 
 .headline {
@@ -284,7 +311,7 @@ const copy = computed(() =>
   max-width: 14ch;
   text-wrap: balance;
   color: var(--orange);
-  animation: rise-in 1100ms var(--ease-out-expo) 350ms both;
+  animation: rise-in 1000ms var(--ease-out-expo) 350ms backwards;
 }
 
 .lead {
@@ -295,7 +322,7 @@ const copy = computed(() =>
   color: var(--ink);
   max-width: 52ch;
   text-wrap: balance;
-  animation: rise-in 900ms var(--ease-out-expo) 500ms both;
+  animation: rise-in 1000ms var(--ease-out-expo) 350ms backwards;
 }
 
 /* the container is animated (not .cta) so the entrance transform
@@ -305,9 +332,8 @@ const copy = computed(() =>
   justify-content: center;
   align-items: center;
   gap: 16px;
-  margin-top: 10px;
   flex-wrap: wrap;
-  animation: rise-in 900ms var(--ease-out-expo) 650ms both;
+  animation: rise-in 1000ms var(--ease-out-expo) 350ms backwards;
 }
 
 .cta {
@@ -348,43 +374,75 @@ const copy = computed(() =>
   transform: translateY(-2px);
 }
 
-/* ============ Fly-forward (page transition) ============ */
-/* on top of the whole-page dolly in App.vue, the clouds get extra
-   forward motion so they peel past the camera with parallax depth */
+/* ============ Exit (page transition) ============ */
+/* clouds part to the left and right edges with an easy-ease curve while
+   each text block sinks down into its own clip box (.field-box) */
 .hero.flying .cloud-left {
-  animation: cloud-fly-left 760ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: cloud-exit-left 740ms cubic-bezier(0.42, 0, 0.58, 1) both;
 }
 
 .hero.flying .cloud-right {
-  animation: cloud-fly-right 760ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: cloud-exit-right 740ms cubic-bezier(0.42, 0, 0.58, 1) both;
 }
 
-@keyframes cloud-fly-left {
+.hero.flying .birds {
+  animation: birds-exit 640ms cubic-bezier(0.42, 0, 0.58, 1) both;
+}
+
+.hero.flying .location,
+.hero.flying .eyebrow,
+.hero.flying .headline,
+.hero.flying .lead,
+.hero.flying .ctas {
+  animation: sink-into-box 520ms cubic-bezier(0.42, 0, 0.58, 1) both;
+}
+
+@keyframes cloud-exit-left {
   from {
     opacity: 0.32;
-    transform: none;
+    transform: translateX(0);
   }
   to {
-    opacity: 0.55;
-    transform: translate(-28vw, -14vh) scale(2);
+    opacity: 0;
+    transform: translateX(-110%);
   }
 }
 
-@keyframes cloud-fly-right {
+@keyframes cloud-exit-right {
   from {
     opacity: 0.44;
-    transform: none;
+    transform: translateX(0);
   }
   to {
-    opacity: 0.65;
-    transform: translate(26vw, -12vh) scale(2.2);
+    opacity: 0;
+    transform: translateX(110%);
+  }
+}
+
+@keyframes birds-exit {
+  from {
+    opacity: 0.9;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-140%);
+  }
+}
+
+@keyframes sink-into-box {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(118%);
   }
 }
 
 /* ============ Entrance ============ */
 /* everything (including animation delays) waits for the intro handoff */
 .hero.intro-wait .nav,
-.hero.intro-wait .meta,
+.hero.intro-wait .location,
 .hero.intro-wait .eyebrow,
 .hero.intro-wait .headline,
 .hero.intro-wait .lead,
@@ -407,7 +465,7 @@ const copy = computed(() =>
 @keyframes rise-in {
   from {
     opacity: 0;
-    transform: translateY(26px);
+    transform: translateY(115%);
   }
   to {
     opacity: 1;
@@ -485,10 +543,13 @@ const copy = computed(() =>
     gap: 14px;
   }
 
+  .field-box-eyebrow {
+    margin-bottom: 6px;
+  }
+
   .eyebrow {
     font-size: 11px;
     letter-spacing: 0.14em;
-    margin-bottom: 6px;
     max-width: 30ch;
   }
 

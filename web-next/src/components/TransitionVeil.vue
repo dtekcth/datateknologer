@@ -44,11 +44,9 @@ import { mode, phase } from "@/composables/usePageTransition";
 }
 
 @keyframes whiteout-in {
-  0% {
+  0%,
+  72% {
     opacity: 0;
-  }
-  55% {
-    opacity: 0.12;
   }
   100% {
     opacity: 1;
