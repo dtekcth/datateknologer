@@ -34,7 +34,11 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      shown.value = entries[entries.length - 1].isIntersecting;
+      if (entries[entries.length - 1].isIntersecting) {
+        shown.value = true;
+        observer?.disconnect();
+        observer = null;
+      }
     },
     { rootMargin: "0px 0px -10% 0px", threshold: 0.15 },
   );
@@ -118,24 +122,14 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .about-wave {
   position: absolute;
-  left: 50%;
-  top: 42%; /* centred on the photo band, above the captions */
-  transform: translate(-50%, -50%);
-  /* wider than the photo row (~1032px) so it clearly extends past the
-     outer photos and overhangs top/bottom — the opaque photos then
-     sit over its centre */
+  left: -9%;
+  right: -9%;
+  top: 6%;
   width: min(118%, 1280px);
   max-width: none;
-  margin: 0;
+  margin: 0 auto;
   z-index: 0;
   opacity: 0.3;
-  /* wipes in left→right, in step with the photos' staggered reveal */
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1100ms var(--ease-out);
-}
-
-.board-stage.shown .about-wave {
-  clip-path: inset(0 0 0 0);
 }
 
 /* ============ Board grid ============ */
@@ -159,7 +153,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .board.shown .member {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 .photo {
@@ -175,7 +169,6 @@ onBeforeUnmount(() => observer?.disconnect());
   object-fit: cover;
   /* fold the photos into the paper palette; colour returns on hover */
   filter: grayscale(1) contrast(1.06);
-  transition: filter 260ms var(--ease-out);
 }
 
 .member:hover .photo img {
@@ -232,7 +225,7 @@ figcaption {
 
   .about-wave {
     transition: none;
-    clip-path: none;
+    opacity: 0.3;
   }
 }
 

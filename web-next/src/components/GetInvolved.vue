@@ -45,7 +45,11 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      shown.value = entries[entries.length - 1].isIntersecting;
+      if (entries[entries.length - 1].isIntersecting) {
+        shown.value = true;
+        observer?.disconnect();
+        observer = null;
+      }
     },
     { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
   );
@@ -88,8 +92,8 @@ const copy = computed(() =>
       <!-- the same image split down the middle: each half slides in from
            its own side and the two meet to form the touching hands -->
       <div class="hands" aria-hidden="true">
-        <span class="hand hand-l"><img :src="handsUrl" alt="" /></span>
-        <span class="hand hand-r"><img :src="handsUrl" alt="" /></span>
+        <span class="hand hand-l"><img :src="handsUrl" alt="" loading="lazy" decoding="async" /></span>
+        <span class="hand hand-r"><img :src="handsUrl" alt="" loading="lazy" decoding="async" /></span>
       </div>
 
       <form class="form" @submit.prevent="submit">
@@ -203,7 +207,7 @@ const copy = computed(() =>
 
 .stage.shown .hand {
   opacity: 1;
-  transform: translateX(0);
+  transform: none;
 }
 
 .form {
@@ -222,7 +226,7 @@ const copy = computed(() =>
 .stage.shown .hands,
 .stage.shown .form {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* name + email share a row on wide screens, stack on narrow */

@@ -113,8 +113,7 @@ export function useCardDeal() {
             el.classList.remove("deal-lock");
           }
           el.classList.add("dealt");
-        } else {
-          el.classList.remove("dealt");
+          io.disconnect();
         }
       },
       { rootMargin: "0px 0px -10% 0px", threshold: 0.1 },

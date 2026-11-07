@@ -146,18 +146,20 @@ const logo = computed(() =>
   width: 100%;
   height: auto;
   opacity: 0.9;
-  /* solid at the bottom-right corner, feathering toward the top-left so
-     the corner melts into the paper */
-  -webkit-mask-image: radial-gradient(
+}
+
+/* solid at the bottom-right corner, feathering toward the top-left so
+   the corner melts into the paper without allocating GPU mask buffers */
+.art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
     140% 140% at 100% 100%,
-    #000 50%,
-    transparent 84%
+    transparent 50%,
+    var(--paper) 84%
   );
-  mask-image: radial-gradient(
-    140% 140% at 100% 100%,
-    #000 50%,
-    transparent 84%
-  );
+  pointer-events: none;
 }
 
 /* the raspberry pi (workshop) art spans the full bottom of the card —
@@ -168,9 +170,8 @@ const logo = computed(() =>
   width: auto;
 }
 
-.art-workshop img {
-  -webkit-mask-image: none;
-  mask-image: none;
+.art-workshop::after {
+  display: none;
 }
 
 /* the writing (case) and lecture-hall art are sized up so they climb to
@@ -184,18 +185,12 @@ const logo = computed(() =>
 }
 
 /* because these climb up behind the heading, add a second top-down fade
-   (intersected with the corner fade) so they dissolve harder near the
-   title and keep it legible */
-.art-lecture img,
-.art-case img {
-  -webkit-mask-image:
-    radial-gradient(140% 140% at 100% 100%, #000 50%, transparent 84%),
-    linear-gradient(to bottom, transparent 0%, #000 46%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    radial-gradient(140% 140% at 100% 100%, #000 50%, transparent 84%),
-    linear-gradient(to bottom, transparent 0%, #000 46%);
-  mask-composite: intersect;
+   so they dissolve harder near the title and keep it legible */
+.art-lecture::after,
+.art-case::after {
+  background:
+    linear-gradient(to bottom, var(--paper) 0%, transparent 46%),
+    radial-gradient(140% 140% at 100% 100%, transparent 50%, var(--paper) 84%);
 }
 
 /* multiply blends white logo backgrounds into the paper; grayscale
