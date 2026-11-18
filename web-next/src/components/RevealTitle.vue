@@ -25,13 +25,13 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      if (entries[entries.length - 1].isIntersecting) {
+      if (entries.some((e) => e.isIntersecting)) {
         shown.value = true;
         observer?.disconnect();
         observer = null;
       }
     },
-    { threshold: 0.5 },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.2 },
   );
   observer.observe(root.value);
 });
@@ -63,6 +63,7 @@ onBeforeUnmount(() => observer?.disconnect());
    keeps descenders and letter overhangs unclipped at rest */
 .mask {
   display: inline-block;
+  overflow: hidden;
   overflow: clip;
   vertical-align: bottom;
   padding: 0.1em 0.06em;
@@ -71,12 +72,13 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .word {
   display: inline-block;
-  transform: translateY(118%);
+  transform: translate3d(0, 118%, 0);
+  transition: transform 760ms var(--ease-out-expo) calc(var(--i) * 95ms);
+  will-change: transform;
 }
 
 .reveal.shown .word {
-  transform: none;
-  transition: transform 760ms var(--ease-out-expo) calc(var(--i) * 95ms);
+  transform: translate3d(0, 0, 0);
 }
 
 @media (prefers-reduced-motion: reduce) {

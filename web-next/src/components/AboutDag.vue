@@ -2,7 +2,6 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useLocale } from "@/composables/useLocale";
 import RevealTitle from "@/components/RevealTitle.vue";
-import EventWave from "@/components/EventWave.vue";
 /* board members live in src/content/board.ts — edit them there */
 import { BOARD } from "@/content/board";
 
@@ -34,7 +33,7 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      if (entries[entries.length - 1].isIntersecting) {
+      if (entries.some((e) => e.isIntersecting)) {
         shown.value = true;
         observer?.disconnect();
         observer = null;
@@ -54,8 +53,6 @@ onBeforeUnmount(() => observer?.disconnect());
     <p class="lead">{{ copy.lead }}</p>
 
     <div class="board-stage" :class="{ shown }">
-      <EventWave class="about-wave" />
-
       <div ref="grid" class="board" :class="{ shown }">
         <figure
           v-for="(m, i) in BOARD"
@@ -83,11 +80,12 @@ onBeforeUnmount(() => observer?.disconnect());
 
 <style scoped>
 .about {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 1120px;
   margin: 0 auto;
   padding: 110px 24px 140px;
-  /* the wave backdrop is wider than the photo row; clip so it can't
-     push a horizontal scrollbar on narrow viewports */
   overflow: clip;
 }
 
@@ -113,23 +111,8 @@ onBeforeUnmount(() => observer?.disconnect());
   text-wrap: balance;
 }
 
-/* the wave is a backdrop the opaque photos sit on top of — it reads in
-   the gaps between them and around the row, like the tree/clock behind
-   the event cards */
 .board-stage {
   position: relative;
-}
-
-.about-wave {
-  position: absolute;
-  left: -9%;
-  right: -9%;
-  top: 6%;
-  width: min(118%, 1280px);
-  max-width: none;
-  margin: 0 auto;
-  z-index: 0;
-  opacity: 0.3;
 }
 
 /* ============ Board grid ============ */
@@ -145,7 +128,7 @@ onBeforeUnmount(() => observer?.disconnect());
 .member {
   margin: 0;
   opacity: 0;
-  transform: translateY(26px);
+  transform: translate3d(0, 26px, 0);
   transition:
     opacity 600ms var(--ease-out) calc(var(--i) * 110ms),
     transform 700ms var(--ease-out-expo) calc(var(--i) * 110ms);
@@ -153,7 +136,7 @@ onBeforeUnmount(() => observer?.disconnect());
 
 .board.shown .member {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .photo {
@@ -221,11 +204,6 @@ figcaption {
     transition: none;
     opacity: 1;
     transform: none;
-  }
-
-  .about-wave {
-    transition: none;
-    opacity: 0.3;
   }
 }
 

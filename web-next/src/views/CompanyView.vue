@@ -107,7 +107,7 @@ onMounted(() => {
   if (decorEl.value) {
     decorObserver = new IntersectionObserver(
       (entries) => {
-        if (entries[entries.length - 1].isIntersecting) {
+        if (entries.some((e) => e.isIntersecting)) {
           decorShown.value = true;
           decorObserver?.disconnect();
           decorObserver = null;
@@ -120,7 +120,7 @@ onMounted(() => {
   if (svcGridEl.value) {
     svcObserver = new IntersectionObserver(
       (entries) => {
-        if (entries[entries.length - 1].isIntersecting) {
+        if (entries.some((e) => e.isIntersecting)) {
           svcShown.value = true;
           svcObserver?.disconnect();
           svcObserver = null;
@@ -133,7 +133,7 @@ onMounted(() => {
   if (contactStageEl.value) {
     contactObserver = new IntersectionObserver(
       (entries) => {
-        if (entries[entries.length - 1].isIntersecting) {
+        if (entries.some((e) => e.isIntersecting)) {
           contactShown.value = true;
           contactObserver?.disconnect();
           contactObserver = null;
@@ -210,7 +210,7 @@ const armBlock = (
   if (!el) return;
   const io = new IntersectionObserver(
     (entries) => {
-      if (entries[entries.length - 1].isIntersecting) {
+      if (entries.some((e) => e.isIntersecting)) {
         shown.value = true;
         runBlock(counts, getValues);
         io.disconnect();
@@ -348,10 +348,10 @@ const copy = computed(() =>
         locationLine1: "Chalmers University of Technology",
         locationLine2: "Gothenburg",
         ctaServices: "View our services",
-        programTitle: "About our program",
-        programHeading: "The program",
+        programTitle: "About our programme",
+        programHeading: "The programme",
         programBody:
-          "We are one of the fastest growing programs at Chalmers University of Technology — the third-ranked engineering university in the Nordics — having doubled the amount of new students since 2019. Our students are able to move on to a diverse selection of Master programmes, ranging from computer hardware, to automation, to software management.",
+          "We are one of the fastest-growing programmes at Chalmers University of Technology, the third-ranked engineering university in the Nordics, having doubled our number of new students since 2019. Our students can move on to a diverse selection of master's programmes, ranging from computer hardware and automation to software management.",
         programStats: [
           { value: 170, label: "New students every year" },
           { value: 11, label: "Master programs" },
@@ -808,6 +808,8 @@ const copy = computed(() =>
 /* ============ About our program ============ */
 .program {
   position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 1120px;
   margin: 0 auto;
   padding: 200px 24px 160px;
@@ -829,44 +831,41 @@ const copy = computed(() =>
      the "program" / "our division" gap. */
   display: block;
   left: calc(50% - 50vw + 8px);
-  top: 10%;
-  bottom: 0;
-  margin: auto 0;
-  height: fit-content;
+  top: 55%;
   width: min(52vw, 680px);
   opacity: 0;
   /* waits fully off the left edge, slides in on reveal, then sits still */
-  transform: translateX(-108%);
+  transform: translate3d(-108%, -50%, 0);
   transition:
     opacity 700ms var(--ease-out),
     transform 1200ms var(--ease-out-expo);
-}
-
-.nest::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to top, transparent 70%, var(--paper) 100%),
-    linear-gradient(
-      to right,
-      var(--paper) 0%,
-      transparent 15%,
-      transparent 58%,
-      var(--paper) 100%
-    );
-  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 70%, transparent 100%);
 }
 
 .prog-decor.shown .nest {
   opacity: 0.55;
-  transform: none;
+  transform: translate3d(0, -50%, 0);
 }
 
 .nest-img {
   display: block;
   width: 100%;
   height: auto;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 15%,
+    #000 58%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 15%,
+    #000 58%,
+    transparent 100%
+  );
 }
 
 /* each bee fades in at its Fibonacci step (--d) without promoting 11
@@ -1009,7 +1008,7 @@ const copy = computed(() =>
   color: var(--ink);
   /* rises in when the block scrolls into view */
   opacity: 0;
-  transform: translateY(18px);
+  transform: translate3d(0, 18px, 0);
   transition:
     opacity 600ms var(--ease-out),
     transform 700ms var(--ease-out-expo);
@@ -1017,7 +1016,7 @@ const copy = computed(() =>
 
 .prog-block.shown .prog-subtitle {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .prog-lead {
@@ -1031,7 +1030,7 @@ const copy = computed(() =>
   text-wrap: balance;
   /* rises in just after the heading — one cascade down the block */
   opacity: 0;
-  transform: translateY(16px);
+  transform: translate3d(0, 16px, 0);
   transition:
     opacity 650ms var(--ease-out) 140ms,
     transform 750ms var(--ease-out-expo) 140ms;
@@ -1039,7 +1038,7 @@ const copy = computed(() =>
 
 .prog-block.shown .prog-lead {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 /* big-number stats — display figures in orange, mono caption below */
@@ -1054,6 +1053,8 @@ const copy = computed(() =>
 /* ============ Services ============ */
 .services {
   position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 24px 150px;
@@ -1082,7 +1083,18 @@ const copy = computed(() =>
   inset: -5% -3%;
   z-index: 0;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 900ms var(--ease-out) 200ms;
+  -webkit-mask-image: radial-gradient(
+    ellipse 66% 70% at center,
+    #000 12%,
+    transparent 76%
+  );
+  mask-image: radial-gradient(
+    ellipse 66% 70% at center,
+    #000 12%,
+    transparent 76%
+  );
 }
 
 .svc-comb.shown {
@@ -1094,18 +1106,6 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.svc-comb::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 66% 70% at center,
-    transparent 12%,
-    var(--paper) 76%
-  );
-  pointer-events: none;
 }
 
 .svc-grid {
@@ -1167,7 +1167,7 @@ const copy = computed(() =>
   /* reveal (slow, staggered via --i) and hover (fast) animate different
      properties so they never fight */
   opacity: 0;
-  transform: translateY(26px);
+  transform: translate3d(0, 26px, 0);
   transition:
     opacity 600ms var(--ease-out) calc(var(--i) * 110ms),
     transform 700ms var(--ease-out-expo) calc(var(--i) * 110ms),
@@ -1177,7 +1177,7 @@ const copy = computed(() =>
 
 .svc-grid.shown .svc-card {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .svc-card:hover {
@@ -1370,6 +1370,8 @@ const copy = computed(() =>
 /* ============ Get in touch ============ */
 .contact {
   position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 760px;
   margin: 0 auto;
   padding: 0 24px 160px;
@@ -1435,7 +1437,7 @@ const copy = computed(() =>
 
 .hand-l {
   left: 0;
-  transform: translateX(-104%);
+  transform: translate3d(-104%, 0, 0);
 }
 
 .hand-l img {
@@ -1444,7 +1446,7 @@ const copy = computed(() =>
 
 .hand-r {
   right: 0;
-  transform: translateX(104%);
+  transform: translate3d(104%, 0, 0);
 }
 
 .hand-r img {
@@ -1453,7 +1455,7 @@ const copy = computed(() =>
 
 .contact-stage.shown .hand {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .contact-form {
@@ -1463,7 +1465,7 @@ const copy = computed(() =>
   width: 100%;
   margin-top: 8px;
   opacity: 0;
-  transform: translateY(24px);
+  transform: translate3d(0, 24px, 0);
   transition:
     opacity 700ms var(--ease-out) 160ms,
     transform 800ms var(--ease-out-expo) 160ms;
@@ -1471,7 +1473,7 @@ const copy = computed(() =>
 
 .contact-stage.shown .contact-form {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .field {
@@ -1619,7 +1621,7 @@ const copy = computed(() =>
   color: var(--muted);
   /* trails in just behind the figures as they start counting */
   opacity: 0;
-  transform: translateY(10px);
+  transform: translate3d(0, 10px, 0);
   transition:
     opacity 500ms var(--ease-out) 200ms,
     transform 600ms var(--ease-out-expo) 200ms;
@@ -1627,7 +1629,7 @@ const copy = computed(() =>
 
 .prog-block.shown .stat-label {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .hero {
@@ -1868,14 +1870,8 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   opacity: 0.6;
-}
-
-.tower-wrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 56%, var(--paper) 97%);
-  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 56%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 56%, transparent 97%);
 }
 
 /* bees scattered across the hero — everywhere except over the tower

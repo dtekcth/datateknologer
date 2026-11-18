@@ -52,7 +52,7 @@ const revealOnScroll = (el: HTMLElement | null, flag: Ref<boolean>) => {
   if (!el) return;
   const io = new IntersectionObserver(
     (entries) => {
-      if (entries[entries.length - 1].isIntersecting) {
+      if (entries.some((e) => e.isIntersecting)) {
         flag.value = true;
         io.disconnect();
       }
@@ -628,20 +628,12 @@ const copy = computed(() =>
   animation: hands-in 1800ms var(--ease-out-expo) 300ms backwards;
 }
 
-/* dissolve the building into the paper toward the bottom edge without
-   allocating an offscreen GPU mask buffer */
-.hands::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, var(--paper) 97%);
-  pointer-events: none;
-}
-
 .hands img {
   width: 100%;
   height: auto;
   opacity: 0.28;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 97%);
 }
 
 /* ============ Content ============ */
@@ -732,6 +724,8 @@ const copy = computed(() =>
 /* ============ Events section ============ */
 .events {
   position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 1120px;
   margin: 0 auto;
   padding: 200px 24px 140px;
@@ -753,6 +747,7 @@ const copy = computed(() =>
   right: calc(50% - 50vw - 20px);
   top: 24px;
   height: min(120vh, 1200px);
+  max-height: calc(100% - 24px);
   /* the svg ships with only a viewBox (975×1481), so the ratio has to
      come from here for the box to have a width */
   aspect-ratio: 975 / 1481;
@@ -771,7 +766,7 @@ const copy = computed(() =>
 
 .events-tree.shown {
   opacity: 1;
-  transform: none;
+  transform: scale(1);
 }
 
 .events-tree img {
@@ -780,15 +775,8 @@ const copy = computed(() =>
   height: 100%;
   opacity: 0.85;
   transform: scaleX(-1); /* mirror, in place — wrapper handles the grow */
-}
-
-.events-tree::after,
-.events-tree2::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 62%, var(--paper) 96%);
-  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
 }
 
 /* second (landscape) dithered tree anchored to the bottom-left, beside
@@ -817,7 +805,7 @@ const copy = computed(() =>
 
 .events-tree2.shown {
   opacity: 1;
-  transform: none;
+  transform: scale(1);
 }
 
 .events-tree2 img {
@@ -825,6 +813,8 @@ const copy = computed(() =>
   width: 100%;
   height: 100%;
   opacity: 0.85;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
 }
 
 .events-title {

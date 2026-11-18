@@ -41,7 +41,7 @@ export const BOARD: BoardMember[] = [
   {
     photo: tresurerUrl,
     role: { en: "Treasurer", sv: "Kassör" },
-    name: "Dylan Babahajan",
+    name: "Dylan Babahajian",
     email: "dylan.babahajan@dtek.se",
   },
   {

@@ -45,7 +45,7 @@ onMounted(() => {
   }
   observer = new IntersectionObserver(
     (entries) => {
-      if (entries[entries.length - 1].isIntersecting) {
+      if (entries.some((e) => e.isIntersecting)) {
         shown.value = true;
         observer?.disconnect();
         observer = null;
@@ -122,6 +122,9 @@ const copy = computed(() =>
 
 <style scoped>
 .involved {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
   max-width: 1120px;
   margin: 0 auto;
   padding: 40px 24px 150px;
@@ -189,7 +192,7 @@ const copy = computed(() =>
 
 .hand-l {
   left: 0;
-  transform: translateX(-104%);
+  transform: translate3d(-104%, 0, 0);
 }
 
 .hand-l img {
@@ -198,7 +201,7 @@ const copy = computed(() =>
 
 .hand-r {
   right: 0;
-  transform: translateX(104%);
+  transform: translate3d(104%, 0, 0);
 }
 
 .hand-r img {
@@ -207,7 +210,7 @@ const copy = computed(() =>
 
 .stage.shown .hand {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .form {
@@ -217,7 +220,7 @@ const copy = computed(() =>
   flex-direction: column;
   gap: 16px;
   opacity: 0;
-  transform: translateY(24px);
+  transform: translate3d(0, 24px, 0);
   transition:
     opacity 700ms var(--ease-out) 160ms,
     transform 800ms var(--ease-out-expo) 160ms;
@@ -226,7 +229,7 @@ const copy = computed(() =>
 .stage.shown .hands,
 .stage.shown .form {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
 }
 
 /* name + email share a row on wide screens, stack on narrow */
